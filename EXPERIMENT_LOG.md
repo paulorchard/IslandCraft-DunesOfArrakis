@@ -980,3 +980,274 @@ Not checked: how long the search takes when it has to go far (each new chunk it 
 ## Docs vs vanilla field names
 
 - None recorded yet. All field names so far were copied from vanilla `Desert1_Stacks.json`, `Desert1_Rocky.json` and `Example_PositionCell_Density_Return.json`.
+
+# Round 6 — caves and cave ore (0.7.0)
+
+Server 0.7.0. Stage 1 (sandstone throughout, cave network, rock-only rule). Stage 2 (all large islands, openings) and stage 3 (ore) follow.
+
+## Tools, and what 0.7.0 broke
+
+- `tools/preview/RealPreview.java` ported to 0.7.0: `Density.process` is now `evaluate`, and the density builds need a `HytaleGenerator` plugin object (concurrency) that the fake server now creates.
+- `graph.js` / `write.js` can no longer regenerate the biome: 0.7.0 removed the vanilla `Plains1/Plains1_Mountains` biome the recipes were copied from (and the shared `Plains1_Caves_Terrain` density). The deployed `Arrakis_Terrain.json` is now the source of truth, and this round patches it with `tools/preview/caves.js` from the pre-round copy `tools/preview/out/Arrakis_Terrain.pre-caves.json` (the full pre-round pack is in `tools/preview/out/pre-caves-HytaleGenerator-backup`). `node tools/preview/caves.js [packRoot]` rebuilds everything this round adds; `CAVE_PARAMS='{...}'` overrides parameters.
+- `tools/preview/CaveProbe.java` with `probe.sh`, `runcave.sh`, `try.sh`: classify 2 m voxels (open air / rock / sand / cave air) with the game's own density classes, measure the caves and write slices. The same region before and after is compared for the rules.
+- After the 0.7.0 cave fix (13 inlined vanilla cave nodes) the recipes still carved with the vanilla Plains1 cave graph in every size class. This round removes those and puts our own caves in.
+
+## How the vanilla graph cave works (`GraphGenerators/Plains1_Caves.json`, as found)
+
+- A graph generator builds nodes in 320 m cells, then edges, then gives each node content.
+- Nodes come from `Positions` passes: a 20 m square grid (jitter 5) laid at the `Base` height (the "surface" set), and a 30 m grid (jitter 10) only where `Base-Simplex-192` > -0.5 (the "volcanic" set). `Move` passes shift each set up or down along Y by a noise-driven amount (surface -60..+50 m, volcanic -90..-30 m). So each set is a smooth sheet of nodes through the world.
+- `ProximityConnector`: every selected node links to up to `Cap` random neighbours within `Range` (cap 1: one link each). Vanilla runs: all nodes 25 m; volcanic nodes 35 m; nodes with 0 or 1 links to nodes with 1 or 2 links (25 m; volcanic 40 m).
+- Content (`Constant` content with tags): a density of `Range` 25 (surface) or 30 (volcanic) around the node, a material and prop distributions (decoration). The density is a `MultiMix` keyed by `CurveMapper(DistanceToGraphEdge)`: hollow (-3 / -2) near an edge, simplex noise at a middle distance, solid (1) beyond. Surface: radius 1-8 m (tunnels). Volcanic: up to 24 m (chambers, with a flat floor from a `YValue` curve).
+- Biomes use it through a `Graph` density node (`ImportName` of the graph, background 1) inside `Min(cave, terrain)`; `YSampled` reads it every 3 m.
+- It imports `World-River-Map`, `Base-Simplex-12/24/48/192`, and decoration assignments.
+
+## What was copied and changed
+
+All new assets are ours; the pack imports nothing from the game by name (audit: every `Imported` and `ImportName` in the pack resolves to an export in the pack).
+
+- `Density/Arrakis_Simplex_24/48/96/192.json`: copies of `Base-Simplex-N` (2D simplex, 1 octave, scale N metres). 96 is the one vanilla size not used by the cave itself; it is used for the sheet noise.
+- `Density/Arrakis_Large_Inside.json`: the large-island part of the biome's own `Arrakis_Inside` (regular islands and land masses; medium and small outcrops and the start island left out). About how many metres inside the shore a column is. This is what the generator already uses to tell a large land mass from a medium or small one.
+- `GraphGenerators/Arrakis_Caves.json`: four node sheets laid at `Base` and moved to `Base + centre + noise * amp`:
+
+| Sheet | Content | Centre (Base +) | Amp | Grid | Noise |
+| --- | --- | --- | --- | --- | --- |
+| Upper | tube (vanilla surface content) | +38 | 14 | 32 m | 192 |
+| Middle | tube | 0 | 16 | 32 m | 96 |
+| Deep | chamber (vanilla volcanic content) | -38 | 14 | 48 m | 192 inverted |
+| Floor | chamber | -64 | 8 | 48 m | 96 inverted |
+
+  Node jitter is 0.4 x the grid. Nodes only exist where `Arrakis_Large_Inside` > 8. `World-River-Map` is dropped. Links: inside each sheet 1 neighbour within 1.3 x grid, plus the vanilla all-nodes pass (range 40, cap 3) tying the sheets together, then the vanilla orphan passes (40; chambers 55). Decoration and material content are empty. Nodes run from about Base + 52 down to about Y 8.
+- Material: `Rock_Sandstone` everywhere (the sand-level split into sandstone and red is gone; nothing else used it).
+- Biome terrain: `Min(old terrain, carve)` with `carve = Mix(1000, YSampled(3)[Graph Arrakis_Caves], zone)`.
+
+## How cave air is kept out of sand
+
+Terrain is `Max(sand floor, dunes, Arrakis_Rock)`, so below Base sand fills everything that is not rock, and cutting a cave from the rock term alone would fill it with sand. The carve is applied to the final density instead (`Min`), and only inside `zone`, which is 1 only where all of these hold: `Arrakis_Rock` > 0 (inside the original rock body), `Arrakis_Large_Inside` > 8, Y between 4 and Base + 75, and the voxel 3 blocks straight above is rock too (`Slider`, "cover"). Outside the zone the carve value is 1000 and `Min` leaves the density as it was. So cave air wins inside the original rock body and sand is never touched; where a cave meets the edge of a body it ends at the sand wall. Y < 4 is never carved, so bedrock (Y 0-1) and a few blocks above it stay. `Mix` skips its second input where the zone is 0, so the graph is only read inside large-island rock.
+
+## Preview measurements, one island (seed 1791436655886, island at (640, -480), 1000 m square, 2 m voxels, before and after in the same region)
+
+- Rules: sand voxels before 8,008,471, changed 0. Open air that became solid 0. Rock carved 390,394 voxels, none in a column outside the large footprint.
+- Rock body 35.1 million m3; cave air 3.12 million m3: 8.9% of the body, 9.5% inside the large footprint.
+- Networks: 201 separate pieces, 19 of 4000 m3 or more. The largest holds 82.7% of the cave volume. Deepest cave air Y 5.
+- Natural openings: 137 clusters, 30 with 6 or more boundary voxels. 8 networks have an opening; they hold 89.4% of the cave volume.
+- Tops: of 67,653 rock columns in the large footprint, 0 are holes in the surface; 6.4% have cave air within 6 m below the surface.
+- Slices: `tools/preview/out/caves/stage1_island_vertical_{x,z}.png` and `..._y{p,m}<n>.png` (horizontal, at Base + n or Base - n; the red line in the vertical ones is Base).
+- Cost, preview only: the 22.5 million voxel region took 9.1 s before and 16.7 s after (+83%; caves are only read inside large-island rock). Real chunk times still to be measured in a world.
+
+## Tried and did not work (the numbers above are not the first guess)
+
+- Cover 12 (carve only where 12 blocks above is rock): kept the tops intact but sealed the network (1 opening cluster of 6+ voxels). Cover 6: 5 openings, 0.5% of the volume reachable. Cover 3 keeps 0 holes and still gives openings; cover 0 gives 124 openings but 3.2% of the top columns become holes.
+- Fewer or smaller nodes (grid 28-32 tubes, 44-48 chambers, vanilla cap 1) cut the hollow share to 4-6%, but the network broke into hundreds of pieces (largest 5-9%). Cap 2-3 helps; the vanilla all-nodes pass with cap 3 over 40 m works best.
+- Links only inside each sheet (no all-nodes pass) fragment it (largest 17-37%); extra random links down to the next sheet made vertical shafts and more hollow rather than a connected net.
+- A tube core wider than vanilla (2 m instead of 1) and a 2 m `YSampled` made no real difference to connectivity.
+- Square grids with jitter 8 give straight rectilinear tunnels; jitter 0.4 x grid looks organic.
+
+## Not checked yet
+
+- A real world: generation time, "Unused key" or "Couldn't find" warnings (the preview harness does not print asset-store warnings), what the openings look like from outside, spawn on the changed rock.
+- Only one island measured; stage 2 measures three and all large islands, including whether each one is enterable.
+
+## Stage 2 — caves on every large island, openings and connection checked
+
+Status: deployed (jar of 15:12). Preview only; not seen in a world yet.
+
+The caves were already generic (nodes appear wherever `Arrakis_Large_Inside` is high, so every regular island and land mass gets them); stage 2 is the measurement, plus one change.
+
+### Tool
+
+`tools/preview/islands.sh <pack> <seed> <cx> <cz> <size> <prefix>` (CaveProbe `ISLANDS=1`) finds every large-island footprint in a square (columns with `Arrakis_Large_Inside` above the threshold, 8-connected on a 20 m grid, `MIN_HA` hectares or more), voxelises each one at 2 m, and reports caves, networks, openings and whether the networks can be entered. `isl_try.sh` does the same on a scratch pack built with `CAVE_PARAMS`.
+
+An "opening" is a cluster of 6 or more cave-air voxels that touch open air. "Enterable" here means: the largest network has at least one opening. "Reachable" is the share of cave volume in networks that have an opening.
+
+### The one change: `largeInsideMin` 8 -> 2
+
+With 8 (nodes and carving start 8 "metres" inside the shore), the guaranteed island on seed 42 at (650, -460), a low island with 10 Mm3 of rock, came out sealed: its largest network had no opening (12.8% of the cave volume reachable, 5 openings, all at Y 81-91). With 2 its largest network has one (about 39% reachable). Moving the Upper sheet down (centre +26 instead of +38) did not help more, so it stayed at +38. No entrance system was added.
+
+### Results, 2 m voxels, `largeInsideMin` 2, every large island in a 4 km square round the origin on three seeds, and three huge land masses 10-14 km north on one
+
+| Seed, island centre | Footprint | Rock Mm3 | Cave % of rock | Largest network | Openings (6+ voxels), Y | Networks of 20000 m3 or more, with opening | Reachable |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1791436655886 (-1760, -1740) | 19 ha | 18.7 | 10.1 | 58.5% | 19, 81-129 | 7, 2 | 82.0% |
+| 1791436655886 (-1090, -1060) | 43 | 31.9 | 10.1 | 20.7% | 43, 81-125 | 23, 10 | 71.8% |
+| 1791436655886 (660, -470) | 29 | 33.4 | 9.6 | 81.4% | 34, 83-131 | 8, 3 | 88.6% |
+| 1791436655886 (-1790, 720) | 18 | 10.9 | 10.3 | 37.7% | 10, 85-125 | 10, 2 | 51.1% |
+| 1791432644696 (-1640, -1090) | 27 | 27.2 | 9.5 | 76.5% | 29, 81-129 | 11, 2 | 79.8% |
+| 1791432644696 (640, -440) | 29 | 24.0 | 9.7 | 66.5% | 22, 81-133 | 8, 2 | 80.4% |
+| 1791432644696 (-1370, 580) | 44 | 56.6 | 8.9 | 87.5% | 25, 81-129 | 10, 3 | 91.7% |
+| 42 (330, -1610) | 55 | 55.3 | 9.6 | 78.7% | 58, 81-131 | 18, 3 | 81.6% |
+| 42 (-1560, -1330) | 28 | 33.1 | 9.5 | 89.3% | 22, 81-129 | 5, 2 | 90.3% |
+| 42 (650, -460) | 29 | 10.0 | 10.1 | 27.1% | 6, 81-91 | 10, 3 | 38.9% |
+| 42 (480, 980) | 29 | 23.1 | 9.7 | 37.0% | 31, 81-133 | 17, 4 | 64.7% |
+| north, seed 1791436655886 (1010, -13800) | 252 | 265.1 | 9.4 | 34.1% | 274, 79-131 | 71, 16 | 82.4% |
+| north (-1300, -11930) | 208 | 227.1 | 9.3 | 71.2% | 210, 81-133 | 71, 15 | 82.9% |
+| north (170, -10380) | 148 | 154.3 | 10.0 | 80.4% | 217, 81-129 | 31, 6 | 88.8% |
+
+- All 14 islands: the largest network has an opening. Deepest cave air Y 5 everywhere.
+- The weakest are thin islands: (42, (650, -460)) 39% reachable, (1791436655886, (-1790, 720)) 51%, (42, (480, 980)) 65%. Sealed networks of 20000 m3 or more are common (the 43 ha island at (-1090, -1060) has 13 of 23 sealed), mostly chambers on the Deep and Floor sheets with no tunnel to the rest. Sealed volume per island: 0.09 to 2.8 Mm3.
+- Many openings are at Y 81-85: tunnel mouths at the foot of a cliff where the Middle sheet (Base +/- 16) meets the shore. The sand around them is not carved.
+- Rules (seed 42 at (650, -460) and seed 1791432644696 at (-1370, 580), same region before and after): sand voxels changed 0; open air that became solid 0; rock carved outside the large footprint 0.
+- Tops: 0 or 1 holes in the surface per 26,000-105,000 rock columns; 5-7% of columns have cave air within 6 m below the surface (the cover is 3 blocks).
+- Hollow share: 8.7-10.3% of the rock body on every island. Cost: real chunk time in the v40 world was about 24 ms per chunk at 1000 chunks (reports 28.3 at 100, 25.1 at 500, 24.4 at 1000), against about 19 ms in the same generator without caves.
+
+### Tried, and not kept
+
+- Densifying links (all-nodes pass cap 4 range 44, orphans 50): on the thin island at (-1790, 720) the largest network went from 26% to 43% of the cave volume but the hollow share rose from 10.2% to 12%. Not kept: the connected share depends mostly on how much rock the island has at the sheet heights, not on the links.
+- Lowering the Upper sheet by 12: no better than `largeInsideMin` alone.
+
+### Not checked
+
+- Medium and small bodies are covered only by the "no carving outside a large footprint" count (0). A medium outcrop whose footprint overlaps a large island's would be carved where they overlap.
+- No world yet: warnings, real timings of a first join near a cave entrance, spawn on a carved island.
+
+## Stage 3 — ore on cave surfaces
+
+Status: deployed (jar of 17:03). Measured with the game's own generator, not the density preview, because ore is placed by the prop stage and written into real blocks. Not seen in a world by eye yet.
+
+### The real-engine harness (new, `tools/worldscan/`)
+
+`scan.sh <name> <seed> <minX> <minZ> <nx> <nz> [modJar]` starts a headless server in a scratch folder (`--auth-mode offline`, the Dunes of Arrakis generator, the given seed), with a small test-only plugin (`WorldScanPlugin`, not part of the mod). The plugin generates the block of the world, reads every block with the engine's `SectionReader` and writes a dump; `WorldAnalyze.java` reads the dump. `SPAWN=1` also asks the world's spawn provider for a spawn point and reads the blocks under it. Facts learned:
+
+- Chunks must be read right after they are generated; unloaded ones read back as air (first runs of 400 columns came out empty).
+- Generation time per 32 x 32 column in this harness is not comparable with the in-game reports, but it is comparable between builds.
+- Two dumps of the same region from two builds can be compared block by block (`WorldAnalyze a.bin b.bin`).
+
+### How ore is attached to the cave graph, and what the engine does with it
+
+- A biome `Props` entry of type `Graph` (ContentLayer Priority0, `GraphGenerator.ImportName` Arrakis_Caves) is what asks the graph for the prop distributions in its nodes. Without that entry the nodes' `PropDistributionContent` is ignored. The Arrakis biome had `Props: []`; it now has one entry.
+- Each node's content carries `PropDistributionContent`: a `Union` of five `Assigned` distributions (one per ore the node's height can host), `Range` 12. The positions are wrapped in `Anchor`, so they are in the frame of the node: their Y is the node's Y and they fall inside its range. (Positions in the world frame are at Y 0, outside every node's range: nothing was placed.)
+- Only deep nodes carry ore. A node is deep when `Arrakis_Large_Inside` > 40 (about 40 m inside the shore) and `Arrakis_Rock` is positive 24 blocks above it and 32 blocks away to the north, south, east and west at its own height (`DensityDelimited` node selector with `Slider` reads of the rock density). So ore stays away from the flanks and the openings. A node gets only the ores whose height tier, widened by the scan distance of 10, reaches its height (up to 10 height bands per sheet, so most nodes carry one to three ores).
+- Each assignment (`Assignments/Arrakis_Ore_<Name>.json`) is one `Density` prop with its own pattern, scanner and mask, like vanilla `Desert1_Iron`:
+  - Pattern: `And[ Or[ Wall (Rock_Sandstone beside an air block), Ceiling (Rock_Sandstone above an air block) ], FieldFunction on BaseHeight "Bedrock" (the tier, absolute Y) ]`. The origin is therefore an air block touching a sandstone wall or ceiling: ore starts at a cave surface. (The pattern type for a density test is `FieldFunction`, not `Density`: the asset failed to decode with `Density`.)
+  - Scanner: `ColumnLinear`, relative to the position, 10 blocks below to 10 above, first match from the bottom, result cap 1.
+  - Mask: `DontPlace` Empty, `DontReplace` anything that is not `Rock_Sandstone` (`Inclusive: false`). Ore never replaces air, sand, bedrock or other ore.
+  - Blob: copied from the vanilla recipe (below).
+- Floors are not used as a start surface: a bottom-up scan would always find the floor first. Walls and ceilings only.
+
+### Vanilla numbers kept
+
+| Asset | Block | Copied from | Blob (vanilla) | Range | Positions in a node | Tier (Y; Base 80, Bedrock 0) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Arrakis_Ore_Copper | Ore_Copper_Sandstone | Plains1_Copper | simplex-12 +/-0.3 plus a distance falloff +/-0.7 reaching 10, ore above 0.25 | 2 (vanilla bounds -1..+2) | Mesh2D 12 m, jitter 0.5 (stand-in) | 65-140 (Base -15 up) |
+| Arrakis_Ore_Iron | Ore_Iron_Sandstone | Desert1_Iron | simplex-3D scale 4 +/-0.3 plus a cube falloff +/-0.7 reaching 3 | 2 | Mesh2D 22 m, jitter 0.5 | 45-80 (Base -35 to Base) |
+| Arrakis_Ore_Silver | Ore_Silver_Sandstone | Taiga1_Gold | simplex-3D 0..1 -> -0.5..0 plus a cube falloff -0.5..1 reaching 5 | 3 (vanilla bounds +/-3) | grid 32 m, jitter 16 | 25-55 (Base -55 to -25) |
+| Arrakis_Ore_Gold | Ore_Gold_Sandstone | Taiga1_Gold | same | 3 | grid 32 m, jitter 16 | 10-40 (Base -70 to -40) |
+| Arrakis_Ore_Thorium | Ore_Thorium_Sandstone | Desert1_Thorium | same blob as iron | 2 | Mesh2D 22 m, jitter 0.5 | 5-20 (above Bedrock to Base -60) |
+
+Differences from vanilla, all forced by the engine:
+
+- Copper and gold/silver were meant to keep the vanilla `Bounds` and `Locator` form. Attached to a graph node, both placed nothing in this build (tested alone: the same blobs as `Range` props, with the pattern and scanner inside the prop, work). So their blobs are `Range` props. Copper's vanilla bounds are -1..+2 (a 4 x 4 x 4 block); a symmetric range of 2 gives a 5 x 5 x 5 block, so a copper deposit can be a little larger than vanilla's (biggest seen 58 blocks, vanilla's cap 64 in a 4 cube).
+- Vanilla copper's spacing depends on a bed called `Copper_Count` that Arrakis does not have. Copper positions are a stand-in (a 12 m Mesh2D), so copper is by far the most common ore. Vanilla iron and thorium use 22 m and gold 32 m, kept.
+- Each vanilla recipe's own placement test was replaced by the one rule above, as asked. The pattern is tested at the origin; blob blocks reach up to 2-3 blocks beyond it, so a few ore blocks lie 2 above or below the tier edges (Y 4-21 for thorium against 5-20).
+
+### Measurements (real engine, 640 x 640 block regions, Y 0-200)
+
+Three regions on three seeds: A seed 1791432644696, x -1696..-1056, z 256..896 (a 44 ha island); B seed 42, x 0..640, z -1920..-1280 (north end of a 55 ha island); C seed 1791436655886, x 352..992, z -800..-160 (a 29 ha island). Ore compared with the same pack without ore, caves compared with the same pack without caves.
+
+| Rule | A | B | C |
+| --- | --- | --- | --- |
+| Blocks changed by the caves, other than Rock_Sandstone to air | 0 | 0 | 0 |
+| Cave air (Rock_Sandstone to Empty) | 4.21 Mm3 | 3.39 Mm3 | 3.12 Mm3 |
+| Blocks changed by the ore, other than Rock_Sandstone to ore | 0 | 0 | 0 |
+| Ore blocks | 11,108 | 5,717 | 4,468 |
+| Ore touching cave air | 65.0% | 64.9% | 65.7% |
+| Ore with a sky-air neighbour | 0 | 0 | 0 |
+| Ore within 10 steps of an opening | 0 | 4 | 0 |
+| Ore more than 3 blocks from any air | 111 | 58 | 40 |
+| Deposits not touching air | 24 of 1,026 | 14 of 547 | 9 of 445 |
+
+Per ore (deposits; blocks per deposit smallest / typical / largest; lowest and highest block, Base 80):
+
+| Ore | Region A | Region B | Region C |
+| --- | --- | --- | --- |
+| Copper | 546; 1 / 14 / 53; Y 63-132 | 274; 1 / 14 / 47; Y 63-129 | 219; 1 / 14 / 48; Y 63-130 |
+| Iron | 139; 1 / 4 / 12; Y 44-81 | 114; 1 / 4 / 11; Y 44-81 | 87; 1 / 5 / 13; Y 45-81 |
+| Silver | 127; 1 / 5 / 14; Y 23-57 | 100; 1 / 6 / 15; Y 23-56 | none (no rock that low in the footprint) |
+| Gold | 134; 1 / 5 / 15; Y 8-41 | none | 98; 1 / 5 / 15; Y 8-42 |
+| Thorium | 80; 1 / 4 / 12; Y 4-21 | 59; 1 / 6 / 13; Y 4-21 | 41; 1 / 5 / 14; Y 4-21 |
+
+- Depth histograms put every ore inside its tier (see the Y ranges); copper is spread over Base -20 to +50, iron Base -40 to 0, silver Base -60 to -30, gold Base -80 to -40, thorium Base -80 to -60.
+- Deposit sizes: only copper reaches the 7-20 block target as a typical size; iron, silver, gold and thorium deposits are typically 4-6 blocks (the largest 11-15), because half the blob around an air origin is in air. Not tuned, as asked.
+- The 4 ore blocks near an opening in region B are one deposit at (140, 88, -1771), at Base + 8 on the foot of the island.
+- Spawn (real engine, `SPAWN=1`, five seeds): the spawn provider found rock every time, with solid sandstone under the feet and three air blocks above; in 1.4 to 2.4 s: seed 1791432644696 (1.5, 90, 1.5); 42 (0.5, 99, 0.5); 1791436655886 (20.5, 118, 24.5); 1791831155772 (9.5, 80, 9.5), the same as in the Arrakis v40 log; 1791826253952 (-72.5, 81, -1.5), the same as in the Arrakis v32 log.
+- Warnings in the server log with the final pack: none from this mod beyond the two known ones (the `Dunes_of_Arrakis` key format; the three duplicate export names of the Gorges recipe). No `Unused key` or `Couldn't find` for the new assets.
+
+### Cost (real engine, ms per 32 x 32 column in the harness; same machine, one build after another)
+
+| Build | A | B | C |
+| --- | --- | --- | --- |
+| Before this round (vanilla Plains caves) | 53.1 | 74.3 | 34.1 |
+| Caves, no ore | 53.5 | 73.6 | 35.8 |
+| Caves and ore | 71.4 | 88.1 | 44.7 |
+
+- Caves cost about 0 to 5% over the vanilla caves they replace; ore adds 20 to 33%. This was not what the first version of the carve cost: it re-read the rock recipe at every voxel of a large island (once for the zone, once 3 blocks up), +40% over the old build. The zone tests are now ordered so the rock reads only happen inside a hollow of the cave graph; the output is the same (region A: the first reordering moved 635 edge voxels of 4.2 million, the second none).
+- No `Took too long` line in any of the scan logs. In the game, the log's "Performance Report" is the number to compare (the v40 report with the stage 1 caves was 24.4 ms per chunk over 1000 chunks, against 18.9 before).
+
+### Not what was asked, or not working
+
+- Ore within 10 blocks of an opening is not strictly zero (4 blocks in region B, 0 in A and C). The node-level "deep" test makes it rare, not impossible.
+- A third of the ore blocks do not touch air: the blob extends up to 2-3 blocks into the wall behind the exposed face, as vanilla blobs do (65% touch air); 1% are more than 3 blocks from any air (a blob whose centre air block was a thin crack).
+- Medium and small bodies: the carve is zero outside the large footprint (preview rule check), and in the real engine all changed blocks of a caves-vs-no-caves comparison are Rock_Sandstone to air, but I did not separately count them by body size.
+- Sealed islands (a correction to stage 2). The 14 islands in the stage 2 table were all enterable. On a fourth seed, 1791831155772 (the Arrakis v40 world), two of six large islands in a 4 km square are not: the one at (580, 1100) is a buried mound whose rock only rises to Y 105 over 4.6 ha (1 opening, 0.2% of the cave volume reachable) and the spire island at (1260, -1710) has a largest network with no opening (14%; its rock is mostly buried, with a spire to Y 175; 8 openings in smaller pieces). Lowering `largeInsideMin` to -15 or -30 and raising the Middle sheet to Base +10..+14 changed nothing for them. Denser links (all-nodes pass range 50, cap 3, orphans 55) make the spire island enterable (56% reachable) but raise the hollow share from 10% to 12.6%; the buried mound stays sealed. Not applied; the choice is yours.
+- Seed 1791831155772, the Arrakis v40 world: the island nearest the origin that is enterable is the one at (640, -430), about 770 m from the spawn at (9.5, 80, 9.5). Real-engine scan of x 352..992, z -800..-160 on that seed: cave mouth (611, 115, -423); deep chamber (a 7-block cube of air) at (672, 16, -480); deposits of 5 or more blocks nearest the middle of the region: copper (679, 90, -467), iron (732, 61, -498), silver (720, 38, -447), gold (675, 18, -522), thorium (622, 15, -491).
+
+### Imports left
+
+None from the game by name. Every `Imported` / `ImportName` in the pack (`Arrakis_Simplex_12/24/48/96/192`, `Arrakis_Large_Inside`, `Arrakis_Rock`, `Arrakis_Cave_Graph`, `Arrakis_Inside`, `Arrakis_Pick*`, the `Arrakis_V*` recipe exports, `Arrakis_Caves` as the graph, `Arrakis_Ore_*` as the assignments) resolves to an export in this pack; checked by walking the JSON.
+
+### Tried and did not work
+
+- Ore props with positions in the world frame (Y 0): nothing placed.
+- Biome-level ore (no graph) with a `Locator`/`Mask` wrapper placed nothing either; the vanilla `Desert1_Iron` imported by name did, and so did a `Density` prop with its own pattern and scanner. So the wrapper, not the pipeline, was the problem.
+- Scanner over the whole height tier (`RelativeToPosition` false): a scan from a deep node could find a ceiling anywhere in the column, including near the openings; 1,363 ore blocks had a sky-air neighbour. Scanning only 10 blocks around the node and moving the tier into the pattern brought it to 19, then deep-node tests (inside 40, rock 24 above, 32 to the sides) to 0.
+- Making the zone tests cheaper by ordering them: the carve is identical, the cost came back to the vanilla level.
+
+# Round 7 — ore that wears down (plugin)
+
+Rule: in a Dunes of Arrakis world, the first five breaks of a listed ore block (Ore_Copper/Iron/Silver/Gold/Thorium_Sandstone) pop one ore and leave the block whole; the sixth breaks it normally. Code in `OreBreakRules` (the list, the world test, the tool test), `OreBreakSection` (the saved counts), `OreBreakCounts` (reading and writing them), `OreBreakCore` (the engine calls), `OreBreakSystems` (the event hooks), `OreBreakSelfTest` (development only), wired in `DunesOfArrakisPlugin`. No assets changed.
+
+## What the 0.7.0 jar does (read from the bytecode of `BlockHarvestUtils`, `BreakBlockInteraction`, the block health module)
+
+- **Survival mining** is `BreakBlockInteraction` -> `performBlockDamage` -> `damageSingleBlock`. That method first drops out (returns) for a tool that cannot mine the block, then raises `DamageBlockEvent(item, block, type, health, damage)`. The first number is the block's health before the hit, 1 = whole, not damage so far (verified: a block damaged by 0.3 reports 0.7); the second is the size of the hit after the tool's power. If the event is cancelled the engine calls `invalidateBlock` (re-sends the block to the clients) and returns. Otherwise it takes `damage` off the health (`BlockHealthSection.damage`) and, when the new health is 0 or below (`BlockHealth.isDestroyed`), calls `performBlockBreak`.
+- **`performBlockBreak`** raises `BreakBlockEvent` only when there is an actor (a ref); with no actor it raises `EnvironmentBreakBlockEvent`, which is not cancellable. A cancelled `BreakBlockEvent` also calls `invalidateBlock`. After either, the engine removes the block and spawns the drops.
+- **Creative** is told apart in `BreakBlockInteraction`: `Player.getGameMode() == GameMode.Creative` makes it call `performBlockBreak` directly, so a Creative break never raises a `DamageBlockEvent`; it raises a `BreakBlockEvent` with the player as the actor.
+- **Tool rule**: the engine itself looks for a tool spec of the block's gather type and at least its quality (`getSpecPowerDamageBlock`); each ore has its own gather type (OreCopper, OreIron, OreSilver, OreGold, OreThorium, quality 0). With no matching spec a hit only scratches the block: bare hands do about 0.002 per hit (measured), so the damage event still fires, with a tiny hit.
+- **Health** moved: `BlockHealthChunk.damageBlock` of 0.6.8 is gone; health is `BlockHealthSection` on the section entity. `BlockHealthSection.damage` with a negative amount repairs, but when the block is made whole it clears the record and the pending update, so the clients are never told; the engine sends `UpdateBlockDamages(section x, y, z, [BlockDamageCmd(index, health, delta)])` for every other change, and the rule sends the same packet itself.
+- Handler order: an `EntityEventSystem` can ask to run last (`getDependencies()` returning `RootDependency.lastSet()`, as the engine's own replication system does), and `EventSystem.shouldProcessEvent` skips events that are already cancelled. So a break or hit that another mod has cancelled (Subfiefs in a claim) never reaches the rule: no ore, no count.
+
+## Which event is hooked, and why
+
+The **damage event**, not the break event. At the damage event the block still has health left, so cancelling the final hit means the engine never starts a break: no `BreakBlockEvent`, no removal, no drops, and the engine re-sends the block. Cancelling at the break event would come after the health is already 0 and the clients have been told. On the final hit the rule cancels the event, sets its damage to 0 (as Subfiefs does), pops the ore, resets the block's health to whole and sends the clients that reset (`OreBreakCore.makeWhole`). The hit that breaks is the only one replaced, so mining time, animation, sound and particles of everything before it are the engine's. The next hits start from a whole block, so a free break takes a full mining time like a real one.
+
+## How survival mining is told apart from everything else
+
+- Player in survival: a `DamageBlockEvent` raised for an entity with a `PlayerRef`, `Player.getGameMode()` not Creative, and a held item that is a tool that can mine the block (same gather type and quality test as the engine, `OreBreakRules.toolCanMine`). Only then does a breaking hit become a free break.
+- Player in Creative: no damage event; the `BreakBlockEvent` is let through and the count is forgotten once the block is gone.
+- Anything else damaging the block (an entity that is not a player, or no actor at all: explosions, scripts): if the hit would break the block, the event is cancelled and the block is removed without a drop, sound or effect (`BlockOperations.setBlock` with air, as a command would) and its count forgotten. A `BreakBlockEvent` from a non-player is cancelled and the block removed the same way. A break with no actor (`EnvironmentBreakBlockEvent`) cannot be cancelled, so the items it spawns at the block (the ore and the rock of that block's own drop list, within 1.6 blocks, for one second) are removed as they appear.
+- A command or mod that sets the block to something else directly has no event; that is what the stored block id and the sweep (below) are for.
+
+## Where the count is stored, and when it is written
+
+On the chunk itself: `OreBreakSection`, a component of the section entity, registered through the chunk store registry with a codec (id `Arrakis_OreBreaks`), the same way the engine keeps `BlockHealthSection`. It is a list of strings `"<index in section>:<count>:<block id>"`; only blocks mined at least once have an entry, and an empty section writes nothing. It is saved with the chunk: every change marks the `ChunkSection` as needing saving, so the engine's own saver writes it (on its schedule and at shutdown) and unloads it with the chunk. Counts are per world because chunks are. Two players share one count. Growth is bounded: an entry stores which block it is for and is only ever read back for that block; a mismatch is dropped on read; when a section loads, `SectionSweep` drops every entry whose block is not there any more; the sixth break, a Creative break, any other removal, and placing a block there all remove it. A break that another system cancels leaves it (the check runs a tick after the event and only removes the entry when the block is really gone).
+
+## What was copied from the Compactor
+
+`dropsOf` (the engine's drop generation from the resolved block type, including drop lists; both are the same call) and the idea of popping an item out of the face under the crosshair (`ItemComponent.generateItemDrop` with a push along the face normal; the ray against the block is a reduced copy of `BeamMath.entry`/`offFace` as `OreFace`). Block health: not copied. The Compactor's `BlockHealthChunk` calls do not exist in 0.7.0; the section API is used instead. The ore popped is the first non-rock item of the block's drop list (one of it), so the list can change without touching the rule; if a block's drops contain no ore it is not worn down.
+
+## Flicker
+
+I cannot see this: there is no client in a headless server, so no screen to watch. What I can say from the engine code is why this should not flicker: the damage event is cancelled before any health is taken, the engine re-sends the block on a cancelled damage event, the block was never broken or removed on the server, and the health reset is sent explicitly. If the block still looks gone or cracked for a moment in the game, tell me what you see and I will move the hook or send the crack reset differently.
+
+## Checks (headless server, `tools/worldscan/oretest.sh`, which runs `OreBreakSelfTest` in a Dunes of Arrakis world, stops the server, starts it again and runs a second phase)
+
+A player's own hit cannot be made without a client, and a player entity built by hand crashes the world thread (the engine's own systems expect a connection), so the player handlers are called directly as static methods with a bare `Player` component (`OreBreakSystems.damageByPlayer`, `breakByPlayer`, `placeByPlayer`) and the same engine objects (world, sections, health, items). The event dispatch itself (registration, last-in-order, query) is not exercised; the server starts with all nine systems registered and no warning. Results of the final run, all passing:
+
+- Each of the five ores: its normal drop is the ore and `Rock_Sandstone_Cobble`; five breaking hits each leave the block in place, pop exactly one ore (`Ore_Copper` ... `Ore_Thorium`, quantity 1, never the cobble), leave full health and give a count of 1 to 5; a hit that does not break the block is not taken over and does not count; the sixth breaking hit is left to the engine with the count still 5; once the block is gone the count is forgotten.
+- The player handler with a bare Player: five cancelled-and-zeroed hits with one ore each, the sixth not cancelled with its damage kept; bare hands and a sword are not taken over and do not count; Creative is left alone; a block placed where a count was clears it; a break event keeps the count while the block is there and clears it once it is gone; a break that did not remove the block keeps it.
+- Block health: a block cracked to 0.4 is whole again after `makeWhole`.
+- Not a player: the engine's own damage call with an iron pickaxe and no actor removes the ore block, drops nothing and forgets the count; bare hands do not (the engine only scratches it, 0.998); a break with no actor removes the block and the drops it spawned are gone a second later.
+- Not listed: `Rock_Sandstone` is not taken over and the engine breaks it as usual. Not Dunes of Arrakis: a flat-world provider and no world both fail the world test (a second world could not be created in the harness; the test is the provider check the rule uses).
+- Save and reload: a gold ore with 3 free breaks is saved; after a restart of the server the block is there with a count of 3; a stale entry (its block replaced behind the rule's back) is gone after the section loads; an ore of another kind put where the counted block was starts at 0 and the old entry leaves the section.
+- The server logs of both runs: no SEVERE line, no exception, nothing from the rule. (One WARN, "Task took 55 ms", is the self test's own task on the world thread.)
+- Linkage scan of the jar against the 0.7.0 server jar: empty.
+
+Not checked and left for the game: the break animation and sound, flicker, a crack left on screen, Subfiefs claims (the order is arranged, not run), bare hands and the wrong tool on a real client, the look-based pop position (`TargetUtil.getLook`, wrapped so a failure puts the ore above the block), two real players on one block, and a real chunk unload with a player holding a count. The self test is dormant unless the server is started with `-Darrakis.oretest=<phases>`.

@@ -102,14 +102,14 @@ public class RealPreview {
                 int top = 0;
                 for (int y = 260; y > 0; y -= 4) { // coarse scan down, then refine
                     ctx.position.set(x, y, z);
-                    if (terrain.process(ctx) > 0) {
+                    if (terrain.evaluate(ctx) > 0) {
                         top = y;
-                        for (int yy = y + 3; yy > y; yy--) { ctx.position.set(x, yy, z); if (terrain.process(ctx) > 0) { top = yy; break; } }
+                        for (int yy = y + 3; yy > y; yy--) { ctx.position.set(x, yy, z); if (terrain.evaluate(ctx) > 0) { top = yy; break; } }
                         break;
                     }
                 }
                 height[j * w + i] = top;
-                if (rock != null) { ctx.position.set(x, top, z); isRock[j * w + i] = rock.process(ctx) > 0; } else isRock[j * w + i] = allRock;
+                if (rock != null) { ctx.position.set(x, top, z); isRock[j * w + i] = rock.evaluate(ctx) > 0; } else isRock[j * w + i] = allRock;
             }
         }
         if (rock != null) { // underground check: rock area at two depths against rock showing at the surface
@@ -117,8 +117,8 @@ public class RealPreview {
             for (int j = 0; j < w; j++) for (int i = 0; i < w; i++) {
                 double x = cx - size / 2 + i * res, z = cz - size / 2 + j * res;
                 if (isRock[j * w + i]) surface++;
-                ctx.position.set(x, 40, z); if (rock.process(ctx) > 0) y40++;
-                ctx.position.set(x, 10, z); if (rock.process(ctx) > 0) y10++;
+                ctx.position.set(x, 40, z); if (rock.evaluate(ctx) > 0) y40++;
+                ctx.position.set(x, 10, z); if (rock.evaluate(ctx) > 0) y10++;
             }
             double ha = res * res / 10000.0;
             log.printf("rock showing above the sand %.1f ha; at Y=40 %.1f ha (%.2f x); at Y=10 %.1f ha (%.2f x)%n", surface * ha, y40 * ha, (double) y40 / Math.max(1, surface), y10 * ha, (double) y10 / Math.max(1, surface));
@@ -128,7 +128,7 @@ public class RealPreview {
         if (System.getenv("WALK") != null && res == 1.0) walkReport(height, isRock, w, cx, cz, size);
 
         if (rock != null) { long wrong = 0, sandCols = 0; for (int jj = 0; jj < w; jj++) for (int ii = 0; ii < w; ii++) { if (isRock[jj * w + ii]) continue; sandCols++;
-              ctx.position.set(cx - size / 2 + ii * res, height[jj * w + ii], cz - size / 2 + jj * res); if (rock.process(ctx) >= 0) wrong++; }
+              ctx.position.set(cx - size / 2 + ii * res, height[jj * w + ii], cz - size / 2 + jj * res); if (rock.evaluate(ctx) >= 0) wrong++; }
           log.printf("materials: %d of %d sand-surface columns would be painted as rock (rock density >= 0 at the surface block)%n", wrong, sandCols); }
         { float maxTop = 0; long rc = 0; double sum = 0; for (int k = 0; k < w * w; k++) if (isRock[k]) { rc++; sum += height[k]; maxTop = Math.max(maxTop, height[k]); }
           log.printf("heights: %d rock columns, highest top block Y %.0f, average rock top Y %.1f%n", rc, maxTop, rc == 0 ? 0 : sum / rc); }
@@ -192,7 +192,7 @@ public class RealPreview {
         long total = 0;
         for (int j = 0; j < n; j++) for (int i = 0; i < n; i++) for (int k = 0; k < ny; k++) {
             ctx.position.set(cx - size / 2 + i * step, y0 + k * step, cz - size / 2 + j * step);
-            if (rock.process(ctx) > 0) { solid[(k * n + j) * n + i] = true; total++; }
+            if (rock.evaluate(ctx) > 0) { solid[(k * n + j) * n + i] = true; total++; }
         }
         int[] stack = new int[1 << 20]; int sp = 0;
         for (int s = 0; s < n * n; s++) if (solid[s]) { grounded[s] = true; if (sp == stack.length) stack = java.util.Arrays.copyOf(stack, sp * 2); stack[sp++] = s; }
@@ -226,6 +226,13 @@ public class RealPreview {
         unsafe.putObject(server, unsafe.objectFieldOffset(bus), new EventBus(false));
         Field instance = HytaleServer.class.getDeclaredField("instance");
         unsafe.putObject(unsafe.staticFieldBase(instance), unsafe.staticFieldOffset(instance), server);
+        // 0.7.0: density builds ask the HytaleGenerator plugin for its concurrency (worker count); give it one worker per level.
+        Class<?> hg = Class.forName("com.hypixel.hytale.builtin.hytalegenerator.plugin.HytaleGenerator");
+        Object plugin = unsafe.allocateInstance(hg);
+        Class<?> conc = Class.forName("com.hypixel.hytale.builtin.hytalegenerator.plugin.HytaleGenerator$Concurrency");
+        Object c = conc.getDeclaredConstructor(int.class, int.class, int.class).newInstance(1, 1, 1);
+        Field cf = hg.getDeclaredField("concurrency"); unsafe.putObject(plugin, unsafe.objectFieldOffset(cf), c);
+        Field inst = hg.getDeclaredField("INSTANCE"); unsafe.putObject(unsafe.staticFieldBase(inst), unsafe.staticFieldOffset(inst), plugin);
         log.println("fake server ready");
     }
 }

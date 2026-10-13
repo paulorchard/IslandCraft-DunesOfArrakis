@@ -1,0 +1,1933 @@
+{
+  "$Comment": "About how far inside the shore of a large island or land mass a column is (regular islands: metres; huge land masses: less than a metre per metre). Medium and small outcrops are left out.",
+  "Type": "Exported",
+  "ExportAs": "Arrakis_Large_Inside",
+  "SingleInstance": true,
+  "Skip": false,
+  "Inputs": [
+    {
+      "Type": "YOverride",
+      "Value": 0,
+      "Skip": false,
+      "Inputs": [
+        {
+          "Type": "Cache",
+          "Capacity": 3,
+          "Skip": false,
+          "Inputs": [
+            {
+              "Type": "Max",
+              "Skip": false,
+              "Inputs": [
+                {
+                  "Type": "Multiplier",
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "Constant",
+                      "Value": 300,
+                      "Skip": false
+                    },
+                    {
+                      "$Comment": "Regular island field: > 0 is rock.",
+                      "Type": "Sum",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "$Comment": "Radial falloff from the nearest large-island centre: 1 at the centre, 0 at 300 m, -1 at 600 m.",
+                          "Type": "PositionsCellNoise",
+                          "Skip": false,
+                          "MaxDistance": 600,
+                          "Positions": {
+                            "$Comment": "Large island centres: one guaranteed island at (640, -480), plus the regular grid with every centre within 1200 m of it removed.",
+                            "Type": "Union",
+                            "Skip": false,
+                            "Positions": [
+                              {
+                                "Type": "List",
+                                "Skip": false,
+                                "Positions": [
+                                  {
+                                    "X": 640,
+                                    "Y": 0,
+                                    "Z": -480
+                                  }
+                                ]
+                              },
+                              {
+                                "$Comment": "Keep only grid centres far enough from the guaranteed island.",
+                                "Type": "FieldFunction",
+                                "Skip": false,
+                                "FieldFunction": {
+                                  "Type": "PositionsCellNoise",
+                                  "Skip": false,
+                                  "MaxDistance": 1300,
+                                  "Positions": {
+                                    "Type": "List",
+                                    "Skip": false,
+                                    "Positions": [
+                                      {
+                                        "X": 640,
+                                        "Y": 0,
+                                        "Z": -480
+                                      }
+                                    ]
+                                  },
+                                  "ReturnType": {
+                                    "Type": "Curve",
+                                    "Curve": {
+                                      "Type": "Manual",
+                                      "Points": [
+                                        {
+                                          "In": 1199,
+                                          "Out": 0
+                                        },
+                                        {
+                                          "In": 1200,
+                                          "Out": 1
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "DistanceFunction": {
+                                    "Type": "Euclidean"
+                                  }
+                                },
+                                "Delimiters": [
+                                  {
+                                    "Min": 0.5,
+                                    "Max": 2
+                                  }
+                                ],
+                                "Positions": {
+                                  "$Comment": "Offset keeps island centres away from the fixed spawn at the origin.",
+                                  "Type": "Offset",
+                                  "Skip": false,
+                                  "OffsetX": 900,
+                                  "OffsetY": 0,
+                                  "OffsetZ": 900,
+                                  "Positions": {
+                                    "$Comment": "Randomly drop 30% of the positions.",
+                                    "Type": "Occurrence",
+                                    "Skip": false,
+                                    "Seed": "Arrakis_Islands_Drop",
+                                    "FieldFunction": {
+                                      "$Comment": "Chance that a regular large island exists, by latitude (north is -Z).",
+                                      "Type": "CurveMapper",
+                                      "Curve": {
+                                        "Type": "Manual",
+                                        "Points": [
+                                          {
+                                            "In": -27000,
+                                            "Out": 0.1
+                                          },
+                                          {
+                                            "In": -21000,
+                                            "Out": 0.6
+                                          },
+                                          {
+                                            "In": -1000,
+                                            "Out": 0.7
+                                          },
+                                          {
+                                            "In": 3000,
+                                            "Out": 0.6
+                                          },
+                                          {
+                                            "In": 12000,
+                                            "Out": 0.3
+                                          },
+                                          {
+                                            "In": 20000,
+                                            "Out": 0.1
+                                          }
+                                        ]
+                                      },
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "ZValue",
+                                          "Skip": false
+                                        }
+                                      ]
+                                    },
+                                    "Positions": {
+                                      "Type": "Mesh2D",
+                                      "Skip": false,
+                                      "PointsY": 0,
+                                      "PointGenerator": {
+                                        "Type": "Mesh",
+                                        "Jitter": 0.2,
+                                        "ScaleX": 2500,
+                                        "ScaleY": 2500,
+                                        "ScaleZ": 2500,
+                                        "Seed": "Arrakis_Islands"
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "$Comment": "Large land masses, sub-grid 1.",
+                                "Type": "Offset",
+                                "Skip": false,
+                                "OffsetX": 0,
+                                "OffsetY": 0,
+                                "OffsetZ": 0,
+                                "Positions": {
+                                  "Type": "Occurrence",
+                                  "Skip": false,
+                                  "Seed": "Arrakis_Mass_Drop_Large1",
+                                  "FieldFunction": {
+                                    "$Comment": "Chance that a Large land mass exists, by latitude (north is -Z).",
+                                    "Type": "CurveMapper",
+                                    "Curve": {
+                                      "Type": "Manual",
+                                      "Points": [
+                                        {
+                                          "In": -27000,
+                                          "Out": 0.05
+                                        },
+                                        {
+                                          "In": -21000,
+                                          "Out": 0.45
+                                        },
+                                        {
+                                          "In": -5000,
+                                          "Out": 0.5
+                                        },
+                                        {
+                                          "In": -1500,
+                                          "Out": 0.12
+                                        },
+                                        {
+                                          "In": 4000,
+                                          "Out": 0.12
+                                        },
+                                        {
+                                          "In": 12000,
+                                          "Out": 0.07
+                                        },
+                                        {
+                                          "In": 20000,
+                                          "Out": 0.05
+                                        }
+                                      ]
+                                    },
+                                    "Skip": false,
+                                    "Inputs": [
+                                      {
+                                        "Type": "ZValue",
+                                        "Skip": false
+                                      }
+                                    ]
+                                  },
+                                  "Positions": {
+                                    "Type": "Mesh2D",
+                                    "Skip": false,
+                                    "PointsY": 0,
+                                    "PointGenerator": {
+                                      "Type": "Mesh",
+                                      "Jitter": 0.2,
+                                      "ScaleX": 2800,
+                                      "ScaleY": 1900,
+                                      "ScaleZ": 1900,
+                                      "Seed": "Arrakis_Mass_Large1"
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "$Comment": "Large land masses, sub-grid 2.",
+                                "Type": "Offset",
+                                "Skip": false,
+                                "OffsetX": 1400,
+                                "OffsetY": 0,
+                                "OffsetZ": 950,
+                                "Positions": {
+                                  "Type": "Occurrence",
+                                  "Skip": false,
+                                  "Seed": "Arrakis_Mass_Drop_Large2",
+                                  "FieldFunction": {
+                                    "$Comment": "Chance that a Large land mass exists, by latitude (north is -Z).",
+                                    "Type": "CurveMapper",
+                                    "Curve": {
+                                      "Type": "Manual",
+                                      "Points": [
+                                        {
+                                          "In": -27000,
+                                          "Out": 0.05
+                                        },
+                                        {
+                                          "In": -21000,
+                                          "Out": 0.45
+                                        },
+                                        {
+                                          "In": -5000,
+                                          "Out": 0.5
+                                        },
+                                        {
+                                          "In": -1500,
+                                          "Out": 0.12
+                                        },
+                                        {
+                                          "In": 4000,
+                                          "Out": 0.12
+                                        },
+                                        {
+                                          "In": 12000,
+                                          "Out": 0.07
+                                        },
+                                        {
+                                          "In": 20000,
+                                          "Out": 0.05
+                                        }
+                                      ]
+                                    },
+                                    "Skip": false,
+                                    "Inputs": [
+                                      {
+                                        "Type": "ZValue",
+                                        "Skip": false
+                                      }
+                                    ]
+                                  },
+                                  "Positions": {
+                                    "Type": "Mesh2D",
+                                    "Skip": false,
+                                    "PointsY": 0,
+                                    "PointGenerator": {
+                                      "Type": "Mesh",
+                                      "Jitter": 0.2,
+                                      "ScaleX": 2800,
+                                      "ScaleY": 1900,
+                                      "ScaleZ": 1900,
+                                      "Seed": "Arrakis_Mass_Large2"
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "$Comment": "Huge land masses, sub-grid 1.",
+                                "Type": "Offset",
+                                "Skip": false,
+                                "OffsetX": 700,
+                                "OffsetY": 0,
+                                "OffsetZ": 400,
+                                "Positions": {
+                                  "Type": "Occurrence",
+                                  "Skip": false,
+                                  "Seed": "Arrakis_Mass_Drop_Huge1",
+                                  "FieldFunction": {
+                                    "$Comment": "Chance that a Huge land mass exists, by latitude (north is -Z).",
+                                    "Type": "CurveMapper",
+                                    "Curve": {
+                                      "Type": "Manual",
+                                      "Points": [
+                                        {
+                                          "In": -22000,
+                                          "Out": 0
+                                        },
+                                        {
+                                          "In": -17000,
+                                          "Out": 0.35
+                                        },
+                                        {
+                                          "In": -12000,
+                                          "Out": 0.5
+                                        },
+                                        {
+                                          "In": -6000,
+                                          "Out": 0.45
+                                        },
+                                        {
+                                          "In": -3000,
+                                          "Out": 0
+                                        }
+                                      ]
+                                    },
+                                    "Skip": false,
+                                    "Inputs": [
+                                      {
+                                        "Type": "ZValue",
+                                        "Skip": false
+                                      }
+                                    ]
+                                  },
+                                  "Positions": {
+                                    "Type": "Mesh2D",
+                                    "Skip": false,
+                                    "PointsY": 0,
+                                    "PointGenerator": {
+                                      "Type": "Mesh",
+                                      "Jitter": 0.18,
+                                      "ScaleX": 5500,
+                                      "ScaleY": 3500,
+                                      "ScaleZ": 3500,
+                                      "Seed": "Arrakis_Mass_Huge1"
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "$Comment": "Huge land masses, sub-grid 2.",
+                                "Type": "Offset",
+                                "Skip": false,
+                                "OffsetX": 3450,
+                                "OffsetY": 0,
+                                "OffsetZ": 2150,
+                                "Positions": {
+                                  "Type": "Occurrence",
+                                  "Skip": false,
+                                  "Seed": "Arrakis_Mass_Drop_Huge2",
+                                  "FieldFunction": {
+                                    "$Comment": "Chance that a Huge land mass exists, by latitude (north is -Z).",
+                                    "Type": "CurveMapper",
+                                    "Curve": {
+                                      "Type": "Manual",
+                                      "Points": [
+                                        {
+                                          "In": -22000,
+                                          "Out": 0
+                                        },
+                                        {
+                                          "In": -17000,
+                                          "Out": 0.35
+                                        },
+                                        {
+                                          "In": -12000,
+                                          "Out": 0.5
+                                        },
+                                        {
+                                          "In": -6000,
+                                          "Out": 0.45
+                                        },
+                                        {
+                                          "In": -3000,
+                                          "Out": 0
+                                        }
+                                      ]
+                                    },
+                                    "Skip": false,
+                                    "Inputs": [
+                                      {
+                                        "Type": "ZValue",
+                                        "Skip": false
+                                      }
+                                    ]
+                                  },
+                                  "Positions": {
+                                    "Type": "Mesh2D",
+                                    "Skip": false,
+                                    "PointsY": 0,
+                                    "PointGenerator": {
+                                      "Type": "Mesh",
+                                      "Jitter": 0.18,
+                                      "ScaleX": 5500,
+                                      "ScaleY": 3500,
+                                      "ScaleZ": 3500,
+                                      "Seed": "Arrakis_Mass_Huge2"
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          "ReturnType": {
+                            "Type": "Curve",
+                            "Curve": {
+                              "Type": "Manual",
+                              "Points": [
+                                {
+                                  "In": 0,
+                                  "Out": 1
+                                },
+                                {
+                                  "In": 300,
+                                  "Out": 0
+                                },
+                                {
+                                  "In": 600,
+                                  "Out": -1
+                                }
+                              ]
+                            }
+                          },
+                          "DistanceFunction": {
+                            "Type": "Euclidean"
+                          }
+                        },
+                        {
+                          "$Comment": "Lobes: breaks the mass into bays, peninsulas and detached pieces.",
+                          "Type": "Normalizer",
+                          "FromMin": -1,
+                          "FromMax": 1,
+                          "ToMin": -0.62,
+                          "ToMax": 0.62,
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "SimplexNoise2D",
+                              "Scale": 230,
+                              "Octaves": 2,
+                              "Lacunarity": 2,
+                              "Persistence": 0.5,
+                              "Seed": "Arrakis_Islands_Lobes",
+                              "Skip": false
+                            }
+                          ]
+                        },
+                        {
+                          "$Comment": "Fine coastline detail.",
+                          "Type": "Normalizer",
+                          "FromMin": -1,
+                          "FromMax": 1,
+                          "ToMin": -0.05,
+                          "ToMax": 0.05,
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "SimplexNoise2D",
+                              "Scale": 60,
+                              "Octaves": 2,
+                              "Lacunarity": 2,
+                              "Persistence": 0.5,
+                              "Seed": "Arrakis_Islands_Coast",
+                              "Skip": false
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Type": "Multiplier",
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "Constant",
+                      "Value": 300,
+                      "Skip": false
+                    },
+                    {
+                      "$Comment": "All land-mass fields.",
+                      "Type": "Max",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "$Comment": "Large land-mass field (sub-grid Large1): > 0 is rock.",
+                          "Type": "Sum",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "$Comment": "Large land-mass footprint: one ellipse per land mass; size and slant picked per land mass.",
+                              "Type": "PositionsCellNoise",
+                              "Skip": false,
+                              "MaxDistance": 1450,
+                              "Positions": {
+                                "$Comment": "Large land masses, sub-grid 1.",
+                                "Type": "Offset",
+                                "Skip": false,
+                                "OffsetX": 0,
+                                "OffsetY": 0,
+                                "OffsetZ": 0,
+                                "Positions": {
+                                  "Type": "Occurrence",
+                                  "Skip": false,
+                                  "Seed": "Arrakis_Mass_Drop_Large1",
+                                  "FieldFunction": {
+                                    "$Comment": "Chance that a Large land mass exists, by latitude (north is -Z).",
+                                    "Type": "CurveMapper",
+                                    "Curve": {
+                                      "Type": "Manual",
+                                      "Points": [
+                                        {
+                                          "In": -27000,
+                                          "Out": 0.05
+                                        },
+                                        {
+                                          "In": -21000,
+                                          "Out": 0.45
+                                        },
+                                        {
+                                          "In": -5000,
+                                          "Out": 0.5
+                                        },
+                                        {
+                                          "In": -1500,
+                                          "Out": 0.12
+                                        },
+                                        {
+                                          "In": 4000,
+                                          "Out": 0.12
+                                        },
+                                        {
+                                          "In": 12000,
+                                          "Out": 0.07
+                                        },
+                                        {
+                                          "In": 20000,
+                                          "Out": 0.05
+                                        }
+                                      ]
+                                    },
+                                    "Skip": false,
+                                    "Inputs": [
+                                      {
+                                        "Type": "ZValue",
+                                        "Skip": false
+                                      }
+                                    ]
+                                  },
+                                  "Positions": {
+                                    "Type": "Mesh2D",
+                                    "Skip": false,
+                                    "PointsY": 0,
+                                    "PointGenerator": {
+                                      "Type": "Mesh",
+                                      "Jitter": 0.2,
+                                      "ScaleX": 2800,
+                                      "ScaleY": 1900,
+                                      "ScaleZ": 1900,
+                                      "Seed": "Arrakis_Mass_Large1"
+                                    }
+                                  }
+                                }
+                              },
+                              "ReturnType": {
+                                "Type": "Density",
+                                "ChoiceDensity": {
+                                  "Type": "WhiteNoise",
+                                  "Seed": "Arrakis_Mass_Size_Large1",
+                                  "Skip": false
+                                },
+                                "Delimiters": [
+                                  {
+                                    "From": -1,
+                                    "To": -0.6,
+                                    "Density": {
+                                      "$Comment": "About 750 m by 500 m, turned 0 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": 0,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 375,
+                                            "Y": 1,
+                                            "Z": 250
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "From": -0.6,
+                                    "To": -0.2,
+                                    "Density": {
+                                      "$Comment": "About 960 m by 540 m, turned 25 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": 25,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 480,
+                                            "Y": 1,
+                                            "Z": 270
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "From": -0.2,
+                                    "To": 0.2,
+                                    "Density": {
+                                      "$Comment": "About 1120 m by 600 m, turned -20 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": -20,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 560,
+                                            "Y": 1,
+                                            "Z": 300
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "From": 0.2,
+                                    "To": 0.6,
+                                    "Density": {
+                                      "$Comment": "About 1250 m by 640 m, turned 10 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": 10,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 625,
+                                            "Y": 1,
+                                            "Z": 320
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "From": 0.6,
+                                    "To": 1.01,
+                                    "Density": {
+                                      "$Comment": "About 900 m by 600 m, turned -35 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": -35,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 450,
+                                            "Y": 1,
+                                            "Z": 300
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                ],
+                                "DefaultValue": -1
+                              },
+                              "DistanceFunction": {
+                                "Type": "Euclidean"
+                              }
+                            },
+                            {
+                              "$Comment": "Broad lobes: bays and sand channels at the scale of the land mass.",
+                              "Type": "Normalizer",
+                              "FromMin": -1,
+                              "FromMax": 1,
+                              "ToMin": -0.4,
+                              "ToMax": 0.4,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "SimplexNoise2D",
+                                  "Scale": 300,
+                                  "Octaves": 2,
+                                  "Lacunarity": 2,
+                                  "Persistence": 0.5,
+                                  "Seed": "Arrakis_Mass_Lobes_Large",
+                                  "Skip": false
+                                }
+                              ]
+                            },
+                            {
+                              "$Comment": "Smaller bays.",
+                              "Type": "Normalizer",
+                              "FromMin": -1,
+                              "FromMax": 1,
+                              "ToMin": -0.1,
+                              "ToMax": 0.1,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "SimplexNoise2D",
+                                  "Scale": 90,
+                                  "Octaves": 2,
+                                  "Lacunarity": 2,
+                                  "Persistence": 0.5,
+                                  "Seed": "Arrakis_Mass_Bays_Large",
+                                  "Skip": false
+                                }
+                              ]
+                            },
+                            {
+                              "$Comment": "Fine coastline detail.",
+                              "Type": "Normalizer",
+                              "FromMin": -1,
+                              "FromMax": 1,
+                              "ToMin": -0.05,
+                              "ToMax": 0.05,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "SimplexNoise2D",
+                                  "Scale": 60,
+                                  "Octaves": 2,
+                                  "Lacunarity": 2,
+                                  "Persistence": 0.5,
+                                  "Seed": "Arrakis_Mass_Coast",
+                                  "Skip": false
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "$Comment": "Large land-mass field (sub-grid Large2): > 0 is rock.",
+                          "Type": "Sum",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "$Comment": "Large land-mass footprint: one ellipse per land mass; size and slant picked per land mass.",
+                              "Type": "PositionsCellNoise",
+                              "Skip": false,
+                              "MaxDistance": 1450,
+                              "Positions": {
+                                "$Comment": "Large land masses, sub-grid 2.",
+                                "Type": "Offset",
+                                "Skip": false,
+                                "OffsetX": 1400,
+                                "OffsetY": 0,
+                                "OffsetZ": 950,
+                                "Positions": {
+                                  "Type": "Occurrence",
+                                  "Skip": false,
+                                  "Seed": "Arrakis_Mass_Drop_Large2",
+                                  "FieldFunction": {
+                                    "$Comment": "Chance that a Large land mass exists, by latitude (north is -Z).",
+                                    "Type": "CurveMapper",
+                                    "Curve": {
+                                      "Type": "Manual",
+                                      "Points": [
+                                        {
+                                          "In": -27000,
+                                          "Out": 0.05
+                                        },
+                                        {
+                                          "In": -21000,
+                                          "Out": 0.45
+                                        },
+                                        {
+                                          "In": -5000,
+                                          "Out": 0.5
+                                        },
+                                        {
+                                          "In": -1500,
+                                          "Out": 0.12
+                                        },
+                                        {
+                                          "In": 4000,
+                                          "Out": 0.12
+                                        },
+                                        {
+                                          "In": 12000,
+                                          "Out": 0.07
+                                        },
+                                        {
+                                          "In": 20000,
+                                          "Out": 0.05
+                                        }
+                                      ]
+                                    },
+                                    "Skip": false,
+                                    "Inputs": [
+                                      {
+                                        "Type": "ZValue",
+                                        "Skip": false
+                                      }
+                                    ]
+                                  },
+                                  "Positions": {
+                                    "Type": "Mesh2D",
+                                    "Skip": false,
+                                    "PointsY": 0,
+                                    "PointGenerator": {
+                                      "Type": "Mesh",
+                                      "Jitter": 0.2,
+                                      "ScaleX": 2800,
+                                      "ScaleY": 1900,
+                                      "ScaleZ": 1900,
+                                      "Seed": "Arrakis_Mass_Large2"
+                                    }
+                                  }
+                                }
+                              },
+                              "ReturnType": {
+                                "Type": "Density",
+                                "ChoiceDensity": {
+                                  "Type": "WhiteNoise",
+                                  "Seed": "Arrakis_Mass_Size_Large2",
+                                  "Skip": false
+                                },
+                                "Delimiters": [
+                                  {
+                                    "From": -1,
+                                    "To": -0.6,
+                                    "Density": {
+                                      "$Comment": "About 750 m by 500 m, turned 0 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": 0,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 375,
+                                            "Y": 1,
+                                            "Z": 250
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "From": -0.6,
+                                    "To": -0.2,
+                                    "Density": {
+                                      "$Comment": "About 960 m by 540 m, turned 25 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": 25,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 480,
+                                            "Y": 1,
+                                            "Z": 270
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "From": -0.2,
+                                    "To": 0.2,
+                                    "Density": {
+                                      "$Comment": "About 1120 m by 600 m, turned -20 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": -20,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 560,
+                                            "Y": 1,
+                                            "Z": 300
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "From": 0.2,
+                                    "To": 0.6,
+                                    "Density": {
+                                      "$Comment": "About 1250 m by 640 m, turned 10 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": 10,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 625,
+                                            "Y": 1,
+                                            "Z": 320
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "From": 0.6,
+                                    "To": 1.01,
+                                    "Density": {
+                                      "$Comment": "About 900 m by 600 m, turned -35 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": -35,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 450,
+                                            "Y": 1,
+                                            "Z": 300
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                ],
+                                "DefaultValue": -1
+                              },
+                              "DistanceFunction": {
+                                "Type": "Euclidean"
+                              }
+                            },
+                            {
+                              "$Comment": "Broad lobes: bays and sand channels at the scale of the land mass.",
+                              "Type": "Normalizer",
+                              "FromMin": -1,
+                              "FromMax": 1,
+                              "ToMin": -0.4,
+                              "ToMax": 0.4,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "SimplexNoise2D",
+                                  "Scale": 300,
+                                  "Octaves": 2,
+                                  "Lacunarity": 2,
+                                  "Persistence": 0.5,
+                                  "Seed": "Arrakis_Mass_Lobes_Large",
+                                  "Skip": false
+                                }
+                              ]
+                            },
+                            {
+                              "$Comment": "Smaller bays.",
+                              "Type": "Normalizer",
+                              "FromMin": -1,
+                              "FromMax": 1,
+                              "ToMin": -0.1,
+                              "ToMax": 0.1,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "SimplexNoise2D",
+                                  "Scale": 90,
+                                  "Octaves": 2,
+                                  "Lacunarity": 2,
+                                  "Persistence": 0.5,
+                                  "Seed": "Arrakis_Mass_Bays_Large",
+                                  "Skip": false
+                                }
+                              ]
+                            },
+                            {
+                              "$Comment": "Fine coastline detail.",
+                              "Type": "Normalizer",
+                              "FromMin": -1,
+                              "FromMax": 1,
+                              "ToMin": -0.05,
+                              "ToMax": 0.05,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "SimplexNoise2D",
+                                  "Scale": 60,
+                                  "Octaves": 2,
+                                  "Lacunarity": 2,
+                                  "Persistence": 0.5,
+                                  "Seed": "Arrakis_Mass_Coast",
+                                  "Skip": false
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "$Comment": "Huge land-mass field (sub-grid Huge1): > 0 is rock.",
+                          "Type": "Sum",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "$Comment": "Huge land-mass footprint: one ellipse per land mass; size and slant picked per land mass.",
+                              "Type": "PositionsCellNoise",
+                              "Skip": false,
+                              "MaxDistance": 2700,
+                              "Positions": {
+                                "$Comment": "Huge land masses, sub-grid 1.",
+                                "Type": "Offset",
+                                "Skip": false,
+                                "OffsetX": 700,
+                                "OffsetY": 0,
+                                "OffsetZ": 400,
+                                "Positions": {
+                                  "Type": "Occurrence",
+                                  "Skip": false,
+                                  "Seed": "Arrakis_Mass_Drop_Huge1",
+                                  "FieldFunction": {
+                                    "$Comment": "Chance that a Huge land mass exists, by latitude (north is -Z).",
+                                    "Type": "CurveMapper",
+                                    "Curve": {
+                                      "Type": "Manual",
+                                      "Points": [
+                                        {
+                                          "In": -22000,
+                                          "Out": 0
+                                        },
+                                        {
+                                          "In": -17000,
+                                          "Out": 0.35
+                                        },
+                                        {
+                                          "In": -12000,
+                                          "Out": 0.5
+                                        },
+                                        {
+                                          "In": -6000,
+                                          "Out": 0.45
+                                        },
+                                        {
+                                          "In": -3000,
+                                          "Out": 0
+                                        }
+                                      ]
+                                    },
+                                    "Skip": false,
+                                    "Inputs": [
+                                      {
+                                        "Type": "ZValue",
+                                        "Skip": false
+                                      }
+                                    ]
+                                  },
+                                  "Positions": {
+                                    "Type": "Mesh2D",
+                                    "Skip": false,
+                                    "PointsY": 0,
+                                    "PointGenerator": {
+                                      "Type": "Mesh",
+                                      "Jitter": 0.18,
+                                      "ScaleX": 5500,
+                                      "ScaleY": 3500,
+                                      "ScaleZ": 3500,
+                                      "Seed": "Arrakis_Mass_Huge1"
+                                    }
+                                  }
+                                }
+                              },
+                              "ReturnType": {
+                                "Type": "Density",
+                                "ChoiceDensity": {
+                                  "Type": "WhiteNoise",
+                                  "Seed": "Arrakis_Mass_Size_Huge1",
+                                  "Skip": false
+                                },
+                                "Delimiters": [
+                                  {
+                                    "From": -1,
+                                    "To": -0.5,
+                                    "Density": {
+                                      "$Comment": "About 2000 m by 1000 m, turned 0 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": 0,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 1000,
+                                            "Y": 1,
+                                            "Z": 500
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "From": -0.5,
+                                    "To": 0,
+                                    "Density": {
+                                      "$Comment": "About 2200 m by 1120 m, turned 12 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": 12,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 1100,
+                                            "Y": 1,
+                                            "Z": 560
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "From": 0,
+                                    "To": 0.5,
+                                    "Density": {
+                                      "$Comment": "About 2500 m by 1240 m, turned -10 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": -10,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 1250,
+                                            "Y": 1,
+                                            "Z": 620
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "From": 0.5,
+                                    "To": 1.01,
+                                    "Density": {
+                                      "$Comment": "About 2300 m by 1040 m, turned 20 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": 20,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 1150,
+                                            "Y": 1,
+                                            "Z": 520
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                ],
+                                "DefaultValue": -1
+                              },
+                              "DistanceFunction": {
+                                "Type": "Euclidean"
+                              }
+                            },
+                            {
+                              "$Comment": "Broad lobes: bays and sand channels at the scale of the land mass.",
+                              "Type": "Normalizer",
+                              "FromMin": -1,
+                              "FromMax": 1,
+                              "ToMin": -0.35,
+                              "ToMax": 0.35,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "SimplexNoise2D",
+                                  "Scale": 600,
+                                  "Octaves": 2,
+                                  "Lacunarity": 2,
+                                  "Persistence": 0.5,
+                                  "Seed": "Arrakis_Mass_Lobes_Huge",
+                                  "Skip": false
+                                }
+                              ]
+                            },
+                            {
+                              "$Comment": "Smaller bays.",
+                              "Type": "Normalizer",
+                              "FromMin": -1,
+                              "FromMax": 1,
+                              "ToMin": -0.12,
+                              "ToMax": 0.12,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "SimplexNoise2D",
+                                  "Scale": 170,
+                                  "Octaves": 2,
+                                  "Lacunarity": 2,
+                                  "Persistence": 0.5,
+                                  "Seed": "Arrakis_Mass_Bays_Huge",
+                                  "Skip": false
+                                }
+                              ]
+                            },
+                            {
+                              "$Comment": "Fine coastline detail.",
+                              "Type": "Normalizer",
+                              "FromMin": -1,
+                              "FromMax": 1,
+                              "ToMin": -0.05,
+                              "ToMax": 0.05,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "SimplexNoise2D",
+                                  "Scale": 60,
+                                  "Octaves": 2,
+                                  "Lacunarity": 2,
+                                  "Persistence": 0.5,
+                                  "Seed": "Arrakis_Mass_Coast",
+                                  "Skip": false
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "$Comment": "Huge land-mass field (sub-grid Huge2): > 0 is rock.",
+                          "Type": "Sum",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "$Comment": "Huge land-mass footprint: one ellipse per land mass; size and slant picked per land mass.",
+                              "Type": "PositionsCellNoise",
+                              "Skip": false,
+                              "MaxDistance": 2700,
+                              "Positions": {
+                                "$Comment": "Huge land masses, sub-grid 2.",
+                                "Type": "Offset",
+                                "Skip": false,
+                                "OffsetX": 3450,
+                                "OffsetY": 0,
+                                "OffsetZ": 2150,
+                                "Positions": {
+                                  "Type": "Occurrence",
+                                  "Skip": false,
+                                  "Seed": "Arrakis_Mass_Drop_Huge2",
+                                  "FieldFunction": {
+                                    "$Comment": "Chance that a Huge land mass exists, by latitude (north is -Z).",
+                                    "Type": "CurveMapper",
+                                    "Curve": {
+                                      "Type": "Manual",
+                                      "Points": [
+                                        {
+                                          "In": -22000,
+                                          "Out": 0
+                                        },
+                                        {
+                                          "In": -17000,
+                                          "Out": 0.35
+                                        },
+                                        {
+                                          "In": -12000,
+                                          "Out": 0.5
+                                        },
+                                        {
+                                          "In": -6000,
+                                          "Out": 0.45
+                                        },
+                                        {
+                                          "In": -3000,
+                                          "Out": 0
+                                        }
+                                      ]
+                                    },
+                                    "Skip": false,
+                                    "Inputs": [
+                                      {
+                                        "Type": "ZValue",
+                                        "Skip": false
+                                      }
+                                    ]
+                                  },
+                                  "Positions": {
+                                    "Type": "Mesh2D",
+                                    "Skip": false,
+                                    "PointsY": 0,
+                                    "PointGenerator": {
+                                      "Type": "Mesh",
+                                      "Jitter": 0.18,
+                                      "ScaleX": 5500,
+                                      "ScaleY": 3500,
+                                      "ScaleZ": 3500,
+                                      "Seed": "Arrakis_Mass_Huge2"
+                                    }
+                                  }
+                                }
+                              },
+                              "ReturnType": {
+                                "Type": "Density",
+                                "ChoiceDensity": {
+                                  "Type": "WhiteNoise",
+                                  "Seed": "Arrakis_Mass_Size_Huge2",
+                                  "Skip": false
+                                },
+                                "Delimiters": [
+                                  {
+                                    "From": -1,
+                                    "To": -0.5,
+                                    "Density": {
+                                      "$Comment": "About 2000 m by 1000 m, turned 0 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": 0,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 1000,
+                                            "Y": 1,
+                                            "Z": 500
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "From": -0.5,
+                                    "To": 0,
+                                    "Density": {
+                                      "$Comment": "About 2200 m by 1120 m, turned 12 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": 12,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 1100,
+                                            "Y": 1,
+                                            "Z": 560
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "From": 0,
+                                    "To": 0.5,
+                                    "Density": {
+                                      "$Comment": "About 2500 m by 1240 m, turned -10 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": -10,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 1250,
+                                            "Y": 1,
+                                            "Z": 620
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "From": 0.5,
+                                    "To": 1.01,
+                                    "Density": {
+                                      "$Comment": "About 2300 m by 1040 m, turned 20 degrees.",
+                                      "Type": "Anchor",
+                                      "Reversed": false,
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Ellipsoid",
+                                          "Skip": false,
+                                          "Spin": 20,
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": 0,
+                                                "Out": 1
+                                              },
+                                              {
+                                                "In": 1,
+                                                "Out": 0
+                                              },
+                                              {
+                                                "In": 2,
+                                                "Out": -1
+                                              }
+                                            ]
+                                          },
+                                          "Scale": {
+                                            "X": 1150,
+                                            "Y": 1,
+                                            "Z": 520
+                                          },
+                                          "NewYAxis": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "Z": 0
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                ],
+                                "DefaultValue": -1
+                              },
+                              "DistanceFunction": {
+                                "Type": "Euclidean"
+                              }
+                            },
+                            {
+                              "$Comment": "Broad lobes: bays and sand channels at the scale of the land mass.",
+                              "Type": "Normalizer",
+                              "FromMin": -1,
+                              "FromMax": 1,
+                              "ToMin": -0.35,
+                              "ToMax": 0.35,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "SimplexNoise2D",
+                                  "Scale": 600,
+                                  "Octaves": 2,
+                                  "Lacunarity": 2,
+                                  "Persistence": 0.5,
+                                  "Seed": "Arrakis_Mass_Lobes_Huge",
+                                  "Skip": false
+                                }
+                              ]
+                            },
+                            {
+                              "$Comment": "Smaller bays.",
+                              "Type": "Normalizer",
+                              "FromMin": -1,
+                              "FromMax": 1,
+                              "ToMin": -0.12,
+                              "ToMax": 0.12,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "SimplexNoise2D",
+                                  "Scale": 170,
+                                  "Octaves": 2,
+                                  "Lacunarity": 2,
+                                  "Persistence": 0.5,
+                                  "Seed": "Arrakis_Mass_Bays_Huge",
+                                  "Skip": false
+                                }
+                              ]
+                            },
+                            {
+                              "$Comment": "Fine coastline detail.",
+                              "Type": "Normalizer",
+                              "FromMin": -1,
+                              "FromMax": 1,
+                              "ToMin": -0.05,
+                              "ToMax": 0.05,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "SimplexNoise2D",
+                                  "Scale": 60,
+                                  "Octaves": 2,
+                                  "Lacunarity": 2,
+                                  "Persistence": 0.5,
+                                  "Seed": "Arrakis_Mass_Coast",
+                                  "Skip": false
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

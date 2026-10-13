@@ -1,0 +1,12 @@
+{
+  "Group": "Tools",
+  "Name": "WorldScan",
+  "Version": "0.1.0",
+  "Description": "Test harness: generates a block of the default world and dumps its blocks to a file, then stops the server. Not part of the mod.",
+  "ServerVersion": "*",
+  "Main": "WorldScanPlugin",
+  "Dependencies": {},
+  "OptionalDependencies": {},
+  "DisabledByDefault": false,
+  "IncludesAssetPack": false
+}

@@ -1,0 +1,24 @@
+{
+  "Type": "Exported",
+  "ExportAs": "Arrakis_Simplex_96",
+  "SingleInstance": true,
+  "Skip": false,
+  "Inputs": [
+    {
+      "Type": "Cache",
+      "Skip": false,
+      "Capacity": 3,
+      "Inputs": [
+        {
+          "Type": "SimplexNoise2D",
+          "Skip": false,
+          "Lacunarity": 2,
+          "Persistence": 0.5,
+          "Octaves": 1,
+          "Scale": 96,
+          "Seed": "Arrakis_Simplex_96"
+        }
+      ]
+    }
+  ]
+}

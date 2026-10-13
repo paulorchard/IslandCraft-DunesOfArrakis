@@ -1,0 +1,199 @@
+{
+  "Type": "Constant",
+  "ExportAs": "Arrakis_Ore_Thorium",
+  "Skip": false,
+  "Prop": {
+    "Type": "Density",
+    "Skip": false,
+    "Range": {
+      "X": 2,
+      "Y": 2,
+      "Z": 2
+    },
+    "Material": {
+      "Type": "Solidity",
+      "Solid": {
+        "Type": "Constant",
+        "Material": {
+          "Solid": "Ore_Thorium_Sandstone",
+          "SolidBottomUp": false
+        }
+      }
+    },
+    "Density": {
+      "Type": "Sum",
+      "Skip": false,
+      "Inputs": [
+        {
+          "Type": "Normalizer",
+          "Skip": false,
+          "FromMin": -1,
+          "FromMax": 1,
+          "ToMin": -0.3,
+          "ToMax": 0.3,
+          "Inputs": [
+            {
+              "Type": "SimplexNoise3D",
+              "Skip": false,
+              "Lacunarity": 2,
+              "Persistence": 0.5,
+              "Octaves": 1,
+              "ScaleXZ": 4,
+              "ScaleY": 4,
+              "Seed": "A"
+            }
+          ]
+        },
+        {
+          "Type": "Normalizer",
+          "Skip": false,
+          "FromMin": -1,
+          "FromMax": 1,
+          "ToMin": -0.7,
+          "ToMax": 0.7,
+          "Inputs": [
+            {
+              "Type": "Anchor",
+              "Skip": false,
+              "Reversed": false,
+              "Inputs": [
+                {
+                  "Type": "Cube",
+                  "Skip": false,
+                  "Curve": {
+                    "Type": "Manual",
+                    "Points": [
+                      {
+                        "In": 0,
+                        "Out": 1
+                      },
+                      {
+                        "In": 3,
+                        "Out": -2
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "Pattern": {
+      "Type": "And",
+      "Skip": false,
+      "Patterns": [
+        {
+          "Type": "Or",
+          "Skip": false,
+          "Patterns": [
+            {
+              "Type": "Wall",
+              "Skip": false,
+              "Wall": {
+                "Type": "BlockSet",
+                "Skip": false,
+                "BlockSet": {
+                  "Inclusive": true,
+                  "Materials": [
+                    {
+                      "Solid": "Rock_Sandstone",
+                      "SolidBottomUp": false
+                    }
+                  ]
+                }
+              },
+              "Origin": {
+                "Type": "BlockType",
+                "Skip": false,
+                "Material": {
+                  "Solid": "Empty",
+                  "SolidBottomUp": false
+                }
+              },
+              "Directions": [
+                "N",
+                "E",
+                "S",
+                "W"
+              ],
+              "RequireAllDirections": false
+            },
+            {
+              "Type": "Ceiling",
+              "Skip": false,
+              "Ceiling": {
+                "Type": "BlockSet",
+                "Skip": false,
+                "BlockSet": {
+                  "Inclusive": true,
+                  "Materials": [
+                    {
+                      "Solid": "Rock_Sandstone",
+                      "SolidBottomUp": false
+                    }
+                  ]
+                }
+              },
+              "Origin": {
+                "Type": "BlockType",
+                "Skip": false,
+                "Material": {
+                  "Solid": "Empty",
+                  "SolidBottomUp": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Type": "FieldFunction",
+          "Skip": false,
+          "FieldFunction": {
+            "Type": "BaseHeight",
+            "Skip": false,
+            "BaseHeightName": "Bedrock",
+            "Distance": true
+          },
+          "Delimiters": [
+            {
+              "Min": 5,
+              "Max": 21
+            }
+          ]
+        }
+      ]
+    },
+    "Scanner": {
+      "Type": "ColumnLinear",
+      "Skip": false,
+      "MaxY": 10,
+      "MinY": -10,
+      "RelativeToPosition": true,
+      "BaseHeightName": "Bedrock",
+      "TopDownOrder": false,
+      "ResultCap": 1
+    },
+    "PlacementMask": {
+      "DontPlace": {
+        "Inclusive": true,
+        "Materials": [
+          {
+            "Solid": "Empty",
+            "SolidBottomUp": false
+          }
+        ]
+      },
+      "DontReplace": {
+        "Inclusive": false,
+        "Materials": [
+          {
+            "Solid": "Rock_Sandstone",
+            "SolidBottomUp": false
+          }
+        ]
+      }
+    }
+  }
+}
