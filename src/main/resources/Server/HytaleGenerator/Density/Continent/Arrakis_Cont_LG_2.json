@@ -1,0 +1,42 @@
+{
+  "$Comment": "Unit lobe noise (gentle), size class 2: scale 640 m.",
+  "Type": "Exported",
+  "ExportAs": "Arrakis_Cont_LG_2",
+  "SingleInstance": true,
+  "Skip": false,
+  "Inputs": [
+    {
+      "Type": "YOverride",
+      "Value": 0,
+      "Skip": false,
+      "Inputs": [
+        {
+          "Type": "Cache",
+          "Capacity": 3,
+          "Skip": false,
+          "Inputs": [
+            {
+              "Type": "Normalizer",
+              "FromMin": -1,
+              "FromMax": 1,
+              "ToMin": -1,
+              "ToMax": 1,
+              "Skip": false,
+              "Inputs": [
+                {
+                  "Type": "SimplexNoise2D",
+                  "Scale": 640,
+                  "Octaves": 2,
+                  "Lacunarity": 2,
+                  "Persistence": 0.5,
+                  "Seed": "Arrakis_Cont_LobesG_2",
+                  "Skip": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

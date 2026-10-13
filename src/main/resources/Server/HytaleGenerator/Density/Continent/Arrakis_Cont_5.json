@@ -1,0 +1,3035 @@
+{
+  "$Comment": "Continent 5 (red, Arrakis_V4): metres inside its shore, 9 ellipses with blended edge noise; -9999 where there is none.",
+  "Type": "Exported",
+  "ExportAs": "Arrakis_Cont_5",
+  "SingleInstance": true,
+  "Skip": false,
+  "Inputs": [
+    {
+      "Type": "YOverride",
+      "Value": 0,
+      "Skip": false,
+      "Inputs": [
+        {
+          "Type": "Cache",
+          "Capacity": 3,
+          "Skip": false,
+          "Inputs": [
+            {
+              "Type": "Max",
+              "Skip": false,
+              "Inputs": [
+                {
+                  "$Comment": "Ellipse 86 (continent 5, class 1): centre (16095, -14346), 889 x 399, angle 25.7.",
+                  "Type": "Mix",
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "Constant",
+                      "Skip": false,
+                      "Value": -9999
+                    },
+                    {
+                      "Type": "Sum",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Constant",
+                              "Skip": false,
+                              "Value": 596
+                            },
+                            {
+                              "Type": "Slider",
+                              "SlideX": 16095,
+                              "SlideY": 0,
+                              "SlideZ": -14346,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Ellipsoid",
+                                  "Skip": false,
+                                  "Spin": 25.7,
+                                  "Curve": {
+                                    "Type": "Manual",
+                                    "Points": [
+                                      {
+                                        "In": 0,
+                                        "Out": 1
+                                      },
+                                      {
+                                        "In": 1,
+                                        "Out": 0
+                                      },
+                                      {
+                                        "In": 10,
+                                        "Out": -9
+                                      }
+                                    ]
+                                  },
+                                  "Scale": {
+                                    "X": 889,
+                                    "Y": 1,
+                                    "Z": 399
+                                  },
+                                  "NewYAxis": {
+                                    "X": 0,
+                                    "Y": 1,
+                                    "Z": 0
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Sum",
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 89.8
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LG_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 299.3
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LS_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 24.9
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BG_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 74.8
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BS_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Multiplier",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 30
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_CoastUnit"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Type": "Clamp",
+                              "WallA": 0,
+                              "WallB": 1,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Sum",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 1
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": -0.0019838809671419715
+                                        },
+                                        {
+                                          "Type": "Multiplier",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": 596
+                                            },
+                                            {
+                                              "Type": "Slider",
+                                              "SlideX": 16095,
+                                              "SlideY": 0,
+                                              "SlideZ": -14346,
+                                              "Skip": false,
+                                              "Inputs": [
+                                                {
+                                                  "Type": "Ellipsoid",
+                                                  "Skip": false,
+                                                  "Spin": 25.7,
+                                                  "Curve": {
+                                                    "Type": "Manual",
+                                                    "Points": [
+                                                      {
+                                                        "In": 0,
+                                                        "Out": 1
+                                                      },
+                                                      {
+                                                        "In": 1,
+                                                        "Out": 0
+                                                      },
+                                                      {
+                                                        "In": 10,
+                                                        "Out": -9
+                                                      }
+                                                    ]
+                                                  },
+                                                  "Scale": {
+                                                    "X": 889,
+                                                    "Y": 1,
+                                                    "Z": 399
+                                                  },
+                                                  "NewYAxis": {
+                                                    "X": 0,
+                                                    "Y": 1,
+                                                    "Z": 0
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "Min",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": 14500.9375,
+                                "Out": 0
+                              },
+                              {
+                                "In": 14501.9375,
+                                "Out": 1
+                              },
+                              {
+                                "In": 17688.0625,
+                                "Out": 1
+                              },
+                              {
+                                "In": 17689.0625,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "XValue",
+                              "Skip": false
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": -15940.0625,
+                                "Out": 0
+                              },
+                              {
+                                "In": -15939.0625,
+                                "Out": 1
+                              },
+                              {
+                                "In": -12752.9375,
+                                "Out": 1
+                              },
+                              {
+                                "In": -12751.9375,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "ZValue",
+                              "Skip": false
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$Comment": "Ellipse 87 (continent 5, class 1): centre (17318, -14141), 889 x 479, angle -28.6.",
+                  "Type": "Mix",
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "Constant",
+                      "Skip": false,
+                      "Value": -9999
+                    },
+                    {
+                      "Type": "Sum",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Constant",
+                              "Skip": false,
+                              "Value": 653
+                            },
+                            {
+                              "Type": "Slider",
+                              "SlideX": 17318,
+                              "SlideY": 0,
+                              "SlideZ": -14141,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Ellipsoid",
+                                  "Skip": false,
+                                  "Spin": -28.6,
+                                  "Curve": {
+                                    "Type": "Manual",
+                                    "Points": [
+                                      {
+                                        "In": 0,
+                                        "Out": 1
+                                      },
+                                      {
+                                        "In": 1,
+                                        "Out": 0
+                                      },
+                                      {
+                                        "In": 10,
+                                        "Out": -9
+                                      }
+                                    ]
+                                  },
+                                  "Scale": {
+                                    "X": 889,
+                                    "Y": 1,
+                                    "Z": 479
+                                  },
+                                  "NewYAxis": {
+                                    "X": 0,
+                                    "Y": 1,
+                                    "Z": 0
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Sum",
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 107.8
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LG_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 359.3
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LS_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 29.9
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BG_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 89.8
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BS_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Multiplier",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 30
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_CoastUnit"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Type": "Clamp",
+                              "WallA": 0,
+                              "WallB": 1,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Sum",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 1
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": -0.0017269293038316245
+                                        },
+                                        {
+                                          "Type": "Multiplier",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": 653
+                                            },
+                                            {
+                                              "Type": "Slider",
+                                              "SlideX": 17318,
+                                              "SlideY": 0,
+                                              "SlideZ": -14141,
+                                              "Skip": false,
+                                              "Inputs": [
+                                                {
+                                                  "Type": "Ellipsoid",
+                                                  "Skip": false,
+                                                  "Spin": -28.6,
+                                                  "Curve": {
+                                                    "Type": "Manual",
+                                                    "Points": [
+                                                      {
+                                                        "In": 0,
+                                                        "Out": 1
+                                                      },
+                                                      {
+                                                        "In": 1,
+                                                        "Out": 0
+                                                      },
+                                                      {
+                                                        "In": 10,
+                                                        "Out": -9
+                                                      }
+                                                    ]
+                                                  },
+                                                  "Scale": {
+                                                    "X": 889,
+                                                    "Y": 1,
+                                                    "Z": 479
+                                                  },
+                                                  "NewYAxis": {
+                                                    "X": 0,
+                                                    "Y": 1,
+                                                    "Z": 0
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "Min",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": 15648.9375,
+                                "Out": 0
+                              },
+                              {
+                                "In": 15649.9375,
+                                "Out": 1
+                              },
+                              {
+                                "In": 18986.0625,
+                                "Out": 1
+                              },
+                              {
+                                "In": 18987.0625,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "XValue",
+                              "Skip": false
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": -15810.0625,
+                                "Out": 0
+                              },
+                              {
+                                "In": -15809.0625,
+                                "Out": 1
+                              },
+                              {
+                                "In": -12472.9375,
+                                "Out": 1
+                              },
+                              {
+                                "In": -12471.9375,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "ZValue",
+                              "Skip": false
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$Comment": "Ellipse 88 (continent 5, class 3): centre (20430, -11958), 2648 x 889, angle 32.9.",
+                  "Type": "Mix",
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "Constant",
+                      "Skip": false,
+                      "Value": -9999
+                    },
+                    {
+                      "Type": "Sum",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Constant",
+                              "Skip": false,
+                              "Value": 1534
+                            },
+                            {
+                              "Type": "Slider",
+                              "SlideX": 20430,
+                              "SlideY": 0,
+                              "SlideZ": -11958,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Ellipsoid",
+                                  "Skip": false,
+                                  "Spin": 32.9,
+                                  "Curve": {
+                                    "Type": "Manual",
+                                    "Points": [
+                                      {
+                                        "In": 0,
+                                        "Out": 1
+                                      },
+                                      {
+                                        "In": 1,
+                                        "Out": 0
+                                      },
+                                      {
+                                        "In": 10,
+                                        "Out": -9
+                                      }
+                                    ]
+                                  },
+                                  "Scale": {
+                                    "X": 2648,
+                                    "Y": 1,
+                                    "Z": 889
+                                  },
+                                  "NewYAxis": {
+                                    "X": 0,
+                                    "Y": 1,
+                                    "Z": 0
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Sum",
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 200
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LG_3"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 600
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LS_3"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 55.6
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BG_3"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 166.7
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BS_3"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Multiplier",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 30
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_CoastUnit"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Type": "Clamp",
+                              "WallA": 0,
+                              "WallB": 1,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Sum",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 1
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": -0.001115215724541716
+                                        },
+                                        {
+                                          "Type": "Multiplier",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": 1534
+                                            },
+                                            {
+                                              "Type": "Slider",
+                                              "SlideX": 20430,
+                                              "SlideY": 0,
+                                              "SlideZ": -11958,
+                                              "Skip": false,
+                                              "Inputs": [
+                                                {
+                                                  "Type": "Ellipsoid",
+                                                  "Skip": false,
+                                                  "Spin": 32.9,
+                                                  "Curve": {
+                                                    "Type": "Manual",
+                                                    "Points": [
+                                                      {
+                                                        "In": 0,
+                                                        "Out": 1
+                                                      },
+                                                      {
+                                                        "In": 1,
+                                                        "Out": 0
+                                                      },
+                                                      {
+                                                        "In": 10,
+                                                        "Out": -9
+                                                      }
+                                                    ]
+                                                  },
+                                                  "Scale": {
+                                                    "X": 2648,
+                                                    "Y": 1,
+                                                    "Z": 889
+                                                  },
+                                                  "NewYAxis": {
+                                                    "X": 0,
+                                                    "Y": 1,
+                                                    "Z": 0
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "Min",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": 16684.3125,
+                                "Out": 0
+                              },
+                              {
+                                "In": 16685.3125,
+                                "Out": 1
+                              },
+                              {
+                                "In": 24174.6875,
+                                "Out": 1
+                              },
+                              {
+                                "In": 24175.6875,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "XValue",
+                              "Skip": false
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": -15703.6875,
+                                "Out": 0
+                              },
+                              {
+                                "In": -15702.6875,
+                                "Out": 1
+                              },
+                              {
+                                "In": -8213.3125,
+                                "Out": 1
+                              },
+                              {
+                                "In": -8212.3125,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "ZValue",
+                              "Skip": false
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$Comment": "Ellipse 89 (continent 5, class 2): centre (18161, -13807), 1263 x 746, angle 21.",
+                  "Type": "Mix",
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "Constant",
+                      "Skip": false,
+                      "Value": -9999
+                    },
+                    {
+                      "Type": "Sum",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Constant",
+                              "Skip": false,
+                              "Value": 971
+                            },
+                            {
+                              "Type": "Slider",
+                              "SlideX": 18161,
+                              "SlideY": 0,
+                              "SlideZ": -13807,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Ellipsoid",
+                                  "Skip": false,
+                                  "Spin": 21,
+                                  "Curve": {
+                                    "Type": "Manual",
+                                    "Points": [
+                                      {
+                                        "In": 0,
+                                        "Out": 1
+                                      },
+                                      {
+                                        "In": 1,
+                                        "Out": 0
+                                      },
+                                      {
+                                        "In": 10,
+                                        "Out": -9
+                                      }
+                                    ]
+                                  },
+                                  "Scale": {
+                                    "X": 1263,
+                                    "Y": 1,
+                                    "Z": 746
+                                  },
+                                  "NewYAxis": {
+                                    "X": 0,
+                                    "Y": 1,
+                                    "Z": 0
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Sum",
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 167.8
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LG_2"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 559.5
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LS_2"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 46.6
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BG_2"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 139.9
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BS_2"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Multiplier",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 30
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_CoastUnit"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Type": "Clamp",
+                              "WallA": 0,
+                              "WallB": 1,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Sum",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 1
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": -0.0012057272042200451
+                                        },
+                                        {
+                                          "Type": "Multiplier",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": 971
+                                            },
+                                            {
+                                              "Type": "Slider",
+                                              "SlideX": 18161,
+                                              "SlideY": 0,
+                                              "SlideZ": -13807,
+                                              "Skip": false,
+                                              "Inputs": [
+                                                {
+                                                  "Type": "Ellipsoid",
+                                                  "Skip": false,
+                                                  "Spin": 21,
+                                                  "Curve": {
+                                                    "Type": "Manual",
+                                                    "Points": [
+                                                      {
+                                                        "In": 0,
+                                                        "Out": 1
+                                                      },
+                                                      {
+                                                        "In": 1,
+                                                        "Out": 0
+                                                      },
+                                                      {
+                                                        "In": 10,
+                                                        "Out": -9
+                                                      }
+                                                    ]
+                                                  },
+                                                  "Scale": {
+                                                    "X": 1263,
+                                                    "Y": 1,
+                                                    "Z": 746
+                                                  },
+                                                  "NewYAxis": {
+                                                    "X": 0,
+                                                    "Y": 1,
+                                                    "Z": 0
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "Min",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": 15867.625,
+                                "Out": 0
+                              },
+                              {
+                                "In": 15868.625,
+                                "Out": 1
+                              },
+                              {
+                                "In": 20453.375,
+                                "Out": 1
+                              },
+                              {
+                                "In": 20454.375,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "XValue",
+                              "Skip": false
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": -16100.375,
+                                "Out": 0
+                              },
+                              {
+                                "In": -16099.375,
+                                "Out": 1
+                              },
+                              {
+                                "In": -11514.625,
+                                "Out": 1
+                              },
+                              {
+                                "In": -11513.625,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "ZValue",
+                              "Skip": false
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$Comment": "Ellipse 90 (continent 5, class 1): centre (23187, -10480), 1013 x 481, angle 21.",
+                  "Type": "Mix",
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "Constant",
+                      "Skip": false,
+                      "Value": -9999
+                    },
+                    {
+                      "Type": "Sum",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Constant",
+                              "Skip": false,
+                              "Value": 698
+                            },
+                            {
+                              "Type": "Slider",
+                              "SlideX": 23187,
+                              "SlideY": 0,
+                              "SlideZ": -10480,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Ellipsoid",
+                                  "Skip": false,
+                                  "Spin": 21,
+                                  "Curve": {
+                                    "Type": "Manual",
+                                    "Points": [
+                                      {
+                                        "In": 0,
+                                        "Out": 1
+                                      },
+                                      {
+                                        "In": 1,
+                                        "Out": 0
+                                      },
+                                      {
+                                        "In": 10,
+                                        "Out": -9
+                                      }
+                                    ]
+                                  },
+                                  "Scale": {
+                                    "X": 1013,
+                                    "Y": 1,
+                                    "Z": 481
+                                  },
+                                  "NewYAxis": {
+                                    "X": 0,
+                                    "Y": 1,
+                                    "Z": 0
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Sum",
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 108.2
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LG_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 360.8
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LS_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 30.1
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BG_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 90.2
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BS_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Multiplier",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 30
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_CoastUnit"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Type": "Clamp",
+                              "WallA": 0,
+                              "WallB": 1,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Sum",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 1
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": -0.0017213555675094137
+                                        },
+                                        {
+                                          "Type": "Multiplier",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": 698
+                                            },
+                                            {
+                                              "Type": "Slider",
+                                              "SlideX": 23187,
+                                              "SlideY": 0,
+                                              "SlideZ": -10480,
+                                              "Skip": false,
+                                              "Inputs": [
+                                                {
+                                                  "Type": "Ellipsoid",
+                                                  "Skip": false,
+                                                  "Spin": 21,
+                                                  "Curve": {
+                                                    "Type": "Manual",
+                                                    "Points": [
+                                                      {
+                                                        "In": 0,
+                                                        "Out": 1
+                                                      },
+                                                      {
+                                                        "In": 1,
+                                                        "Out": 0
+                                                      },
+                                                      {
+                                                        "In": 10,
+                                                        "Out": -9
+                                                      }
+                                                    ]
+                                                  },
+                                                  "Scale": {
+                                                    "X": 1013,
+                                                    "Y": 1,
+                                                    "Z": 481
+                                                  },
+                                                  "NewYAxis": {
+                                                    "X": 0,
+                                                    "Y": 1,
+                                                    "Z": 0
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "Min",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": 21392.0625,
+                                "Out": 0
+                              },
+                              {
+                                "In": 21393.0625,
+                                "Out": 1
+                              },
+                              {
+                                "In": 24980.9375,
+                                "Out": 1
+                              },
+                              {
+                                "In": 24981.9375,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "XValue",
+                              "Skip": false
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": -12274.9375,
+                                "Out": 0
+                              },
+                              {
+                                "In": -12273.9375,
+                                "Out": 1
+                              },
+                              {
+                                "In": -8686.0625,
+                                "Out": 1
+                              },
+                              {
+                                "In": -8685.0625,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "ZValue",
+                              "Skip": false
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$Comment": "Ellipse 91 (continent 5, class 2): centre (21195, -2547), 1276 x 536, angle 21.",
+                  "Type": "Mix",
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "Constant",
+                      "Skip": false,
+                      "Value": -9999
+                    },
+                    {
+                      "Type": "Sum",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Constant",
+                              "Skip": false,
+                              "Value": 827
+                            },
+                            {
+                              "Type": "Slider",
+                              "SlideX": 21195,
+                              "SlideY": 0,
+                              "SlideZ": -2547,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Ellipsoid",
+                                  "Skip": false,
+                                  "Spin": 21,
+                                  "Curve": {
+                                    "Type": "Manual",
+                                    "Points": [
+                                      {
+                                        "In": 0,
+                                        "Out": 1
+                                      },
+                                      {
+                                        "In": 1,
+                                        "Out": 0
+                                      },
+                                      {
+                                        "In": 10,
+                                        "Out": -9
+                                      }
+                                    ]
+                                  },
+                                  "Scale": {
+                                    "X": 1276,
+                                    "Y": 1,
+                                    "Z": 536
+                                  },
+                                  "NewYAxis": {
+                                    "X": 0,
+                                    "Y": 1,
+                                    "Z": 0
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Sum",
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 120.6
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LG_2"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 402
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LS_2"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 33.5
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BG_2"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 100.5
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BS_2"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Multiplier",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 30
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_CoastUnit"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Type": "Clamp",
+                              "WallA": 0,
+                              "WallB": 1,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Sum",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 1
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": -0.0015810276679841897
+                                        },
+                                        {
+                                          "Type": "Multiplier",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": 827
+                                            },
+                                            {
+                                              "Type": "Slider",
+                                              "SlideX": 21195,
+                                              "SlideY": 0,
+                                              "SlideZ": -2547,
+                                              "Skip": false,
+                                              "Inputs": [
+                                                {
+                                                  "Type": "Ellipsoid",
+                                                  "Skip": false,
+                                                  "Spin": 21,
+                                                  "Curve": {
+                                                    "Type": "Manual",
+                                                    "Points": [
+                                                      {
+                                                        "In": 0,
+                                                        "Out": 1
+                                                      },
+                                                      {
+                                                        "In": 1,
+                                                        "Out": 0
+                                                      },
+                                                      {
+                                                        "In": 10,
+                                                        "Out": -9
+                                                      }
+                                                    ]
+                                                  },
+                                                  "Scale": {
+                                                    "X": 1276,
+                                                    "Y": 1,
+                                                    "Z": 536
+                                                  },
+                                                  "NewYAxis": {
+                                                    "X": 0,
+                                                    "Y": 1,
+                                                    "Z": 0
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "Min",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": 19085.5,
+                                "Out": 0
+                              },
+                              {
+                                "In": 19086.5,
+                                "Out": 1
+                              },
+                              {
+                                "In": 23303.5,
+                                "Out": 1
+                              },
+                              {
+                                "In": 23304.5,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "XValue",
+                              "Skip": false
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": -4656.5,
+                                "Out": 0
+                              },
+                              {
+                                "In": -4655.5,
+                                "Out": 1
+                              },
+                              {
+                                "In": -438.5,
+                                "Out": 1
+                              },
+                              {
+                                "In": -437.5,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "ZValue",
+                              "Skip": false
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$Comment": "Ellipse 92 (continent 5, class 1): centre (22254, -2538), 659 x 385, angle -48.5.",
+                  "Type": "Mix",
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "Constant",
+                      "Skip": false,
+                      "Value": -9999
+                    },
+                    {
+                      "Type": "Sum",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Constant",
+                              "Skip": false,
+                              "Value": 504
+                            },
+                            {
+                              "Type": "Slider",
+                              "SlideX": 22254,
+                              "SlideY": 0,
+                              "SlideZ": -2538,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Ellipsoid",
+                                  "Skip": false,
+                                  "Spin": -48.5,
+                                  "Curve": {
+                                    "Type": "Manual",
+                                    "Points": [
+                                      {
+                                        "In": 0,
+                                        "Out": 1
+                                      },
+                                      {
+                                        "In": 1,
+                                        "Out": 0
+                                      },
+                                      {
+                                        "In": 10,
+                                        "Out": -9
+                                      }
+                                    ]
+                                  },
+                                  "Scale": {
+                                    "X": 659,
+                                    "Y": 1,
+                                    "Z": 385
+                                  },
+                                  "NewYAxis": {
+                                    "X": 0,
+                                    "Y": 1,
+                                    "Z": 0
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Sum",
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 86.6
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LG_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 288.8
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LS_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 24.1
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BG_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 72.2
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BS_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Multiplier",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 30
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_CoastUnit"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Type": "Clamp",
+                              "WallA": 0,
+                              "WallB": 1,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Sum",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 1
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": -0.0020369191597708466
+                                        },
+                                        {
+                                          "Type": "Multiplier",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": 504
+                                            },
+                                            {
+                                              "Type": "Slider",
+                                              "SlideX": 22254,
+                                              "SlideY": 0,
+                                              "SlideZ": -2538,
+                                              "Skip": false,
+                                              "Inputs": [
+                                                {
+                                                  "Type": "Ellipsoid",
+                                                  "Skip": false,
+                                                  "Spin": -48.5,
+                                                  "Curve": {
+                                                    "Type": "Manual",
+                                                    "Points": [
+                                                      {
+                                                        "In": 0,
+                                                        "Out": 1
+                                                      },
+                                                      {
+                                                        "In": 1,
+                                                        "Out": 0
+                                                      },
+                                                      {
+                                                        "In": 10,
+                                                        "Out": -9
+                                                      }
+                                                    ]
+                                                  },
+                                                  "Scale": {
+                                                    "X": 659,
+                                                    "Y": 1,
+                                                    "Z": 385
+                                                  },
+                                                  "NewYAxis": {
+                                                    "X": 0,
+                                                    "Y": 1,
+                                                    "Z": 0
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "Min",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": 20903.0625,
+                                "Out": 0
+                              },
+                              {
+                                "In": 20904.0625,
+                                "Out": 1
+                              },
+                              {
+                                "In": 23603.9375,
+                                "Out": 1
+                              },
+                              {
+                                "In": 23604.9375,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "XValue",
+                              "Skip": false
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": -3888.9375,
+                                "Out": 0
+                              },
+                              {
+                                "In": -3887.9375,
+                                "Out": 1
+                              },
+                              {
+                                "In": -1188.0625,
+                                "Out": 1
+                              },
+                              {
+                                "In": -1187.0625,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "ZValue",
+                              "Skip": false
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$Comment": "Ellipse 93 (continent 5, class 1): centre (15030, -14735), 763 x 267, angle 25.7.",
+                  "Type": "Mix",
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "Constant",
+                      "Skip": false,
+                      "Value": -9999
+                    },
+                    {
+                      "Type": "Sum",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Constant",
+                              "Skip": false,
+                              "Value": 451
+                            },
+                            {
+                              "Type": "Slider",
+                              "SlideX": 15030,
+                              "SlideY": 0,
+                              "SlideZ": -14735,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Ellipsoid",
+                                  "Skip": false,
+                                  "Spin": 25.7,
+                                  "Curve": {
+                                    "Type": "Manual",
+                                    "Points": [
+                                      {
+                                        "In": 0,
+                                        "Out": 1
+                                      },
+                                      {
+                                        "In": 1,
+                                        "Out": 0
+                                      },
+                                      {
+                                        "In": 10,
+                                        "Out": -9
+                                      }
+                                    ]
+                                  },
+                                  "Scale": {
+                                    "X": 763,
+                                    "Y": 1,
+                                    "Z": 267
+                                  },
+                                  "NewYAxis": {
+                                    "X": 0,
+                                    "Y": 1,
+                                    "Z": 0
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Sum",
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 60.1
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LG_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 200.3
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LS_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 16.7
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BG_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 50.1
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BS_1"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Multiplier",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 30
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_CoastUnit"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Type": "Clamp",
+                              "WallA": 0,
+                              "WallB": 1,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Sum",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 1
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": -0.002629416598192276
+                                        },
+                                        {
+                                          "Type": "Multiplier",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": 451
+                                            },
+                                            {
+                                              "Type": "Slider",
+                                              "SlideX": 15030,
+                                              "SlideY": 0,
+                                              "SlideZ": -14735,
+                                              "Skip": false,
+                                              "Inputs": [
+                                                {
+                                                  "Type": "Ellipsoid",
+                                                  "Skip": false,
+                                                  "Spin": 25.7,
+                                                  "Curve": {
+                                                    "Type": "Manual",
+                                                    "Points": [
+                                                      {
+                                                        "In": 0,
+                                                        "Out": 1
+                                                      },
+                                                      {
+                                                        "In": 1,
+                                                        "Out": 0
+                                                      },
+                                                      {
+                                                        "In": 10,
+                                                        "Out": -9
+                                                      }
+                                                    ]
+                                                  },
+                                                  "Scale": {
+                                                    "X": 763,
+                                                    "Y": 1,
+                                                    "Z": 267
+                                                  },
+                                                  "NewYAxis": {
+                                                    "X": 0,
+                                                    "Y": 1,
+                                                    "Z": 0
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "Min",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": 13685.6875,
+                                "Out": 0
+                              },
+                              {
+                                "In": 13686.6875,
+                                "Out": 1
+                              },
+                              {
+                                "In": 16373.3125,
+                                "Out": 1
+                              },
+                              {
+                                "In": 16374.3125,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "XValue",
+                              "Skip": false
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": -16079.3125,
+                                "Out": 0
+                              },
+                              {
+                                "In": -16078.3125,
+                                "Out": 1
+                              },
+                              {
+                                "In": -13391.6875,
+                                "Out": 1
+                              },
+                              {
+                                "In": -13390.6875,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "ZValue",
+                              "Skip": false
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$Comment": "Ellipse 94 (continent 5, class 2): centre (22799, -11164), 1497 x 364, angle 8.",
+                  "Type": "Mix",
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "Constant",
+                      "Skip": false,
+                      "Value": -9999
+                    },
+                    {
+                      "Type": "Sum",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Constant",
+                              "Skip": false,
+                              "Value": 738
+                            },
+                            {
+                              "Type": "Slider",
+                              "SlideX": 22799,
+                              "SlideY": 0,
+                              "SlideZ": -11164,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Ellipsoid",
+                                  "Skip": false,
+                                  "Spin": 8,
+                                  "Curve": {
+                                    "Type": "Manual",
+                                    "Points": [
+                                      {
+                                        "In": 0,
+                                        "Out": 1
+                                      },
+                                      {
+                                        "In": 1,
+                                        "Out": 0
+                                      },
+                                      {
+                                        "In": 10,
+                                        "Out": -9
+                                      }
+                                    ]
+                                  },
+                                  "Scale": {
+                                    "X": 1497,
+                                    "Y": 1,
+                                    "Z": 364
+                                  },
+                                  "NewYAxis": {
+                                    "X": 0,
+                                    "Y": 1,
+                                    "Z": 0
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "Multiplier",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Sum",
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 81.9
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LG_2"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 273
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_LS_2"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Mix",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 22.8
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BG_2"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 68.3
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_BS_2"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_Blend"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Multiplier",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 30
+                                    },
+                                    {
+                                      "Type": "Imported",
+                                      "Skip": false,
+                                      "Name": "Arrakis_Cont_CoastUnit"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Type": "Clamp",
+                              "WallA": 0,
+                              "WallB": 1,
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Sum",
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Constant",
+                                      "Skip": false,
+                                      "Value": 1
+                                    },
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": -0.002122015915119363
+                                        },
+                                        {
+                                          "Type": "Multiplier",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": 738
+                                            },
+                                            {
+                                              "Type": "Slider",
+                                              "SlideX": 22799,
+                                              "SlideY": 0,
+                                              "SlideZ": -11164,
+                                              "Skip": false,
+                                              "Inputs": [
+                                                {
+                                                  "Type": "Ellipsoid",
+                                                  "Skip": false,
+                                                  "Spin": 8,
+                                                  "Curve": {
+                                                    "Type": "Manual",
+                                                    "Points": [
+                                                      {
+                                                        "In": 0,
+                                                        "Out": 1
+                                                      },
+                                                      {
+                                                        "In": 1,
+                                                        "Out": 0
+                                                      },
+                                                      {
+                                                        "In": 10,
+                                                        "Out": -9
+                                                      }
+                                                    ]
+                                                  },
+                                                  "Scale": {
+                                                    "X": 1497,
+                                                    "Y": 1,
+                                                    "Z": 364
+                                                  },
+                                                  "NewYAxis": {
+                                                    "X": 0,
+                                                    "Y": 1,
+                                                    "Z": 0
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "Min",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": 20629.75,
+                                "Out": 0
+                              },
+                              {
+                                "In": 20630.75,
+                                "Out": 1
+                              },
+                              {
+                                "In": 24967.25,
+                                "Out": 1
+                              },
+                              {
+                                "In": 24968.25,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "XValue",
+                              "Skip": false
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "CurveMapper",
+                          "Curve": {
+                            "Type": "Manual",
+                            "Points": [
+                              {
+                                "In": -13333.25,
+                                "Out": 0
+                              },
+                              {
+                                "In": -13332.25,
+                                "Out": 1
+                              },
+                              {
+                                "In": -8995.75,
+                                "Out": 1
+                              },
+                              {
+                                "In": -8994.75,
+                                "Out": 0
+                              }
+                            ]
+                          },
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "ZValue",
+                              "Skip": false
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

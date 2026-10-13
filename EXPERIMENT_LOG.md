@@ -1251,3 +1251,160 @@ A player's own hit cannot be made without a client, and a player entity built by
 - Linkage scan of the jar against the 0.7.0 server jar: empty.
 
 Not checked and left for the game: the break animation and sound, flicker, a crack left on screen, Subfiefs claims (the order is arranged, not run), bare hands and the wrong tool on a real client, the look-based pop position (`TargetUtil.getLook`, wrapped so a failure puts the ore above the block), two real players on one block, and a real chunk unload with a player holding a count. The self test is dormant unless the server is started with `-Darrakis.oretest=<phases>`.
+
+## Round 8: fixed continent from thirty ellipses (prompt 17)
+
+Source data: `tools/continent-ellipses.md` (copy of the reference file) and `tools/continent-ellipses.json` (the JSON block alone, read by the build script and the preview). East is +X and north is -Z (log, round 1 layout), so the file's coordinates are used as they are; no mirroring. The origin is inside ellipses 15 and 17 (checked). Sum of the ellipse areas is 35.7% of the 50 km square; the union is about 30%.
+
+### Stage 1: thirty land masses, one variant, no seam rule
+
+Build: `tools/preview/continent.js` (run before `caves.js`, which now reads the continent biome when it exists; `buildpack.sh` makes a scratch pack with both). It adds, to the pre-round biome:
+- `Density/Arrakis_Continent.json`: metres inside the shore of the nearest of the thirty masses, -9999 where there is none. Placement chosen: **thirty directly positioned `Ellipsoid` shapes (anchored with a Slider) combined with `Max`, each inside its own `Mix` whose influence is a box 1.65 half-axes wide.** `Mix` does not evaluate its second input where the influence is 0, so a column far from an ellipse pays one box test, not an ellipsoid and noise. A fixed `List` into `PositionsCellNoise` would need a lookup distance of about 8 km and evaluate every cell in it. One more box over all thirty masks the whole field outside the continent.
+- `Density/Arrakis_Continent_Noise_{A,B,C,D}.json`: lobes and bays per size class, shared by all masses of the class (four noise sets, not thirty), in units of the half-axis. Lobe and bay strengths as the existing masses use: +/-0.45 and +/-0.14. `Arrakis_Continent_Coast.json`: coast detail +/-40 m at scale 60. `Arrakis_Continent_Pick.json`: one variant pick for the whole continent (stage 2 replaces it).
+- In the biome: a copy of the "Land mass" rock body (variant lowered 8 blocks, coast rise 1.3 m per m, root rule) with the continent field as footprint and coast and the continent pick as variant; `Arrakis_Continent` is also a term of `Arrakis_Inside`, so the recipes treat it as a land mass.
+
+Class scales (noise scale in metres, lobes / bays). Table values from the prompt first, values used second:
+
+| Class | Prompt | Used |
+| --- | --- | --- |
+| A | 800 / 230 | 480 / 150 |
+| B | 1500 / 420 | 900 / 270 |
+| C | 2200 / 600 | 1300 / 380 |
+| D | 3600 / 1000 | 2100 / 600 |
+
+With the table values and the existing strengths the outline of the class D mass moved only about 1 km from the ellipse (a 2-octave simplex rarely reaches its extremes and a 3600 m wavelength is half the mass); tried first at +/-0.35 and +/-0.40 as well. At about 0.6 of the table scales the class D mass has bays about a kilometre across and peninsulas, with the fuzzy fringe the other masses have. Renders: `tools/preview/out/continent/s1_seedA.png` (whole square, 100 m per pixel, ellipse outlines in red, origin marked) and `s1_classD.png` (the class D mass, 50 m per pixel).
+
+Measured (seed 1791436655886, the Arrakis v20 seed; `tools/preview/coarse.sh`, rock top found in steps of 8 blocks):
+- Rock share of the square: 29.4% (bare ellipses about 30%, the union; random islands outside add some, lobes take some).
+- Real engine ms per 32 x 32 column (`tools/worldscan/cost.sh`, 64 columns per place, one jar after another, so each figure carries JIT warm-up): before / stage 1: open desert 34.8 / 44.2; random island 107.5 / 110.3; inside the class D mass 35.8 (that spot was sand before) / 91.7. The desert difference is probably warm-up noise (the continent field is a box test there); to be re-measured in the game's Performance Report at the end.
+- Biome file: 3.44 MB before this round (with the caves), 3.56 MB after the continent (the 30 ellipses add about 100 kB; the continent also adds six small density files).
+
+Not done in this stage: variant per region, seams, random-island changes, caves on the continent (the caves script already ran over it, so the class D mass has caves in the render pack; to be checked in stage 4), spawn.
+
+### Stage 2: regions, variant picks, seams
+
+Build: `tools/preview/continent.js` (stage 2 part); renders `s2_seedA.png` (whole square), `s2_pick.png` (coloured by variant value, ellipse outlines labelled with ellipse ids), `s2_seam15_17.png` (the seam closest to spawn, 8 km at 20 m per pixel, coloured by variant); statistics `tools/preview/seams.sh`.
+
+**Regions and the variant pick.** Each of the 20 regions has a light field `Density/Continent_Regions/Arrakis_Cont_G_<region>.json` (its ellipse terms only, the best of its ellipses, no lobes). A region's variant value is white noise at its first ellipse centre (so it follows the world seed), one per region, not per ellipse. The pick `Arrakis_Continent_Pick` is a balanced tournament: two groups of regions, the pick switches from one group's value to the other's where the second group's best field (plus a wandering offset) overtakes the first's. The continent body of the biome imports it in place of `Arrakis_Pick`. Same-region ellipses share one value, so there is no join between them (checked in `s2_pick.png`: ellipses 21-22-23, 12-13-14, 16-17, 19-20 and so on are one colour).
+
+**The seam line.** The line where one region gives way to the next is where the two regions' fields plus an offset are equal. The offset is a different noise per region (scale 450 m, 2 octaves, +/-600 field units, which is about +/-300 m), so the line wanders by a few hundred metres and the variant change moves with it. `Arrakis_Continent_Join` = the smallest |difference| over the region pairs whose ellipses overlap (22 pairs found by sampling; the reference file lists 21: my list also has 15 and 16, which touch over 93 of 25 m samples), 10000 unless both regions are at least 100 m inside their ellipses; it is 0 on the line.
+
+**The lowering.** `Arrakis_Continent_Seam` is a cap on the continent field: `cmin + curve(join x slope)`. `cmin` is -80 to +40 m (noise scale 600 m; below 0 there is no rock at all, so a sand channel, 67% of the line by construction), slope 0.325 to 0.87 (noise scale 420 m) sets the band width at 150 to 400 m, and the curve is 1:1 up to 130 and then steep, so outside the band the cap is far above any rock. `Arrakis_Continent` = Min(the thirty ellipse fields, the cap). Because the coast rule lets rock rise 1.3 m per metre in from the shore, a cap of 30 m gives a pass about 40 blocks above sand level; below 0 the footprint ends, so no rock and no cave (the cave and ore code reads `Arrakis_Inside`, which includes `Arrakis_Continent`). Parameters are at the top of the script.
+
+**Seam statistics** (seed 1791436655886, 25 m grid over each pair's overlap, join points = join under 60, i.e. within about 30 m of the line; rock top found in steps of 8 blocks; sand = no rock above Base + 4, low rock = top under Base + 60, full height = above):
+all pairs 5,357 points: sand 72%, low rock 27%, full-height 1%.
+Worst pairs for full-height rock: 06-07 13% (8 points), 14-16 7% (118), 05-06 5% (43), 26-27 4% (171), 29-30 4% (314); every other pair 2% or less. Most sand: 15-16 100% (2 points), 11-12 86%, 04-09 88%, 20-21 83%, 24-25 83%. Least: 29-30 49% (low rock 47%). Every pair table is in `tools/preview/out/continent/seams.png.log`.
+(15 and 17, the pair next to spawn: 78% sand, 22% low rock, 0% full height.)
+
+**Rock share of the square:** 24.7% with the seams, 24.75% with the seam cap switched off (`CONT_SEAM_OFF=1`), against 29.4% in stage 1. So the seams themselves take only 0.07 percentage points; the drop is the variants: stage 1 used one dense variant everywhere, and now several regions got thin ones with many sand gaps (the sparse olive and blue regions in `s2_pick.png`). This is the existing variant mix, not a new recipe.
+
+**What did not work (and cost):** the first version of the pick and the seam used chains over all 20 regions (top two by a running maximum, 450 imports of full region fields). It rendered fine, but loading the generator in a server took 39 s (jstack: `ImportedDensityAsset.cleanUp` expanding every import recursively, once per import). Fix: light region fields without lobes or coast, a balanced tournament for the pick (about 90 region-field copies instead of 450) and the listed pairs instead of a running second-best for the seam. Rule learned: in these assets an import is expanded as a copy at load time, so what is imported many times must be small.
+
+**Cost (real engine, ms per column in the harness, 64 columns, includes the generator build):** the figures are dominated by a one-time load (about 3 s more than stage 1 for this stage; stage 1 itself +0.6 s over the old build). Totals in the same units as stage 1: open desert 2.2 s before, 2.8 stage 1, 5.4 stage 2; random island 6.9, 7.1, 10.7; inside the class D mass 2.3 (sand there before), 5.9, 7.5. Per-chunk cost to be read from the game's Performance Report at the end.
+Biome file unchanged at 3.56 MB (the pick and seam are separate density files: 22 files, about 0.4 MB in all).
+
+### Stage 3: random islands outside the continent
+
+Build: second half of `tools/preview/continent.js`. Statistics: `tools/preview/islandstats.js` over a coarse render dump (`stage3_renders.sh` makes the lot for one seed). All numbers are seed 1791436655886 (the Arrakis v20 seed), one seed only.
+
+**The frequency factor.** Every random-island rule gets one factor `F(x, z)`, 0 to 1:
+- 0 inside the continent footprint (so no land-mass centre and no free-standing outcrop inside it), 1 within 3 km of the footprint, falling linearly to a deep level at 10 km and beyond.
+- Beyond the 50 km square (25 km from the centre line in x or z, fading over 2 km) the deep level applies whatever the distance to the coast, so the east and west edges (and the north and south ones) are open sand with sparse outcrops, as the far south was.
+- Two deep levels: the island grids (regular islands, large and huge masses) thin to 0.1 of their near-coast keep chance; the free-standing outcrops (medium and small, which were already sparse) to 0.8. With 0.1 for both, the deep desert came out at one land mass per 10.8 km, too thin; with 0.55 for the outcrops 6.8 km; 0.8 gives 6.0 km (target 4 to 6 km, mostly small).
+- Where it is applied: it multiplies the keep-chance curve (`FieldFunction` of each `Occurrence`) of the five grids, in all 97 places the biome repeats them (the rock bodies repeat the island positions, so every copy had to change or the rock and the footprints would disagree); and it adds a kill (`noise above F`) to the survival density of the medium and small outcrops, where a cell is killed when its value is 10. Files: `Arrakis_Island_Frequency`, `Arrakis_Outcrop_Frequency`, `Arrakis_Continent_Dist`.
+- Distance from the continent: `Arrakis_Continent_Dist` is one `PositionsCellNoise` over a 1 km lattice of 756 points inside the thirty ellipses (before lobes), minus 700 m. Compared with the exact distance to the ellipse outline on a 400 m grid, the field is 200 to 500 m too small outside (so the near zone reaches about 3.3 km) and spread about +/-300 m; 3.4% of the samples at the edge are on the wrong side of 0. Fine for this use.
+
+**Latitude (size) curves** (keep chance by Z; north is negative). Regular islands: 0.1 at 27 km north, 0.6 at 21, 0.5 at 12, 0.7 at 1, 0.6 at 3 km south, 0.3 at 12 south, 0.1 at 20 south. Large masses: peak 0.5 at 12 km north (was a plateau 0.45 from 21 to 5 km north), 0.3 at 5 north, 0.12 round spawn, 0.08 at 4 km south, 0.04 at 12 south, 0.02 at 20 south. Huge masses unchanged (0 beyond 22 km north, 0.5 at 12, none from 3 km north southwards), which is the "peaks about 12 km north, smaller further north" shape. Outcrops have no latitude term (never had one here). In practice almost all the north-peak land is inside the continent; the large masses that do appear sit on the west and east flanks and in the north fringe.
+
+**Counts** (counted pieces of rock at Base + 4, at least 4 columns of 50 m, not touching the nominal continent footprint; class by area: outcrop under 0.03 km2, medium 0.03-0.15, island 0.15-0.8, large 0.8-4, huge over 4):
+
+| Distance from coast | Area km2 | outcrop | medium | island | large | huge | all | per km2 | spacing km |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 0-3 km | 666 | 213 | 113 | 57 | 5 | 0 | 388 | 0.58 | 1.3 |
+| 3-10 km | 612 | 59 | 24 | 21 | 1 | 0 | 105 | 0.17 | 2.4 |
+| beyond 10 km | 463 | 12 | 0 | 1 | 0 | 0 | 13 | 0.03 | 6.0 |
+
+Before this round (the old generator, no continent, same seed and the same bands measured from the same ellipses): 0-3 km 278 pieces (1.5 km spacing), 3-10 km 162 (1.9 km), beyond 10 km 39 (3.4 km). So near the coast the rule gives one land mass every 1.3 km (target 1 to 1.5); the deep desert one every 6 km (target 4 to 6) and nearly all outcrops. There are no huge masses at all in this window (there were none in the old window either; their centres would have to lie outside the continent in the 12 km north band, which the continent mostly fills) and the large ones went from 8 to 6.
+By latitude (5 km bands, Z): 70, 61, 80, 66, 73 pieces from 25 km north to the centre line, then 32, 80, 27, 11, 6 from the centre line to 25 km south. So going south the count falls steadily after the 5-10 km band (which is the continent's south coast) and the far south is sparse; the 12 km north band has the most large masses (3).
+The largest counted pieces are 1.4 to 2.5 km2 (the large masses), 1.1 to 4.9 km from the coast.
+**Beyond the square** (|Z| < 25 km): west 25-27 km from the centre line 0.11 per km2, 27-30 km 0.04, 30-35 km 0.03; east 25-27 km 0.39 (this is the continent's own fringe: ellipse 24 reaches X 24,928 and its lobes go further), 27-30 km 0.07, 30-35 km 0.01. So from 27 km the density is the deep-desert level.
+Land masses that merged with the coast are not counted separately (they count as the continent): 429 of 935 rock pieces touch the nominal footprint. 35 pieces of 0.15 km2 or more lie within 1.5 km of it without touching.
+`tools/preview/out/continent/s3_wide70km.png` (70 km, 50 m per pixel) shows the falloff on the east and west sides.
+
+**What did not work / cost.**
+- First version of the distance field was the thirty ellipses (each with its own box): correct, but loading the generator went from 3.6 s to 7.5 s, because every one of the 97 repeated grids expands its copy of the factor and its distance field. A version without per-ellipse boxes 6.4 s. The lattice cell-noise (one node) 3.9 s.
+- Asked at many candidate positions by the island grids, the lattice search cost about 70 ms more per 32 x 32 column near islands; a 512-entry cache on the distance and the two factors brings that to about 19 ms (`cacheBig` in the script).
+- Cost (real engine, ms per chunk-column group; 64 columns, one jar after another, includes one-time load): open desert before 2.2 s, stage 2 5.4, stage 3 5.3; random island (23 km east of the origin, in a large mass) before 8.7, stage 2 11.9, stage 3 12.9; inside the class D mass 2.3 (sand then), 7.5 stage 2/3.
+- Biome file 3.73 MB (3.56 MB at stage 2); the island rules are three new density files, the largest the lattice (about 100 kB).
+- Not done in this stage: the guaranteed island at (640, -480) and the starting outcrop at the origin are untouched (stage 4 decides what happens at spawn). Caves/ore on the continent not yet checked.
+
+## Round 8, new continent drawing (tools/continent-shapes-v2.svg)
+
+Review of the second drawing (`arrakis-world-50km-5000px-rework.svg`, kept without its two embedded background images as `tools/continent-shapes-v2.svg`; fitted ellipses in `tools/continent-shapes-v2.json`; analysis `tools/preview/SvgShapes.java`; numbered render `tools/continent-shapes-v2-check.png`):
+- 104 true ellipses (fit error 0.0%), rotated, five fill colours = five continents: purple 31 shapes, 81 km2; green 36, 43 km2; blue 23, 79 km2; brown 5, 6 km2 (3 pieces); red 9, 16 km2 (2 pieces). 225 km2 in all, 9% of the 50 km square; no overlap between colours; closest approaches 311 m (purple-blue), 336 m (purple-brown), 426 m (green-blue), 813 m (purple-green). The origin is inside shape 99 (brown, 440 x 207 m, centred 262 m west of the origin). Three enclosed sand basins of 1.9 to 4.8 km2.
+- Answers: the scale is intended (lore-accurate northern hemisphere); the archipelagos (brown, red) are intended; the sand basins are intentional; origin islet is fine.
+- Decision on the outline noise: the earlier method (lobes and bays +/-0.45 and +/-0.14 of the half-axis, everywhere) made a sieve of rock and sand. The shapes are to be solid continents; the noise should only break up the outer edge where rock meets sand, and the lobes must be rescaled for these (mostly small) ellipses, including the ones that sit close to another continent.
+
+### Lobe and bay showcase (before rebuilding from the drawing)
+
+To choose the outline noise, a showcase world: `tools/preview/showcase_lobes.js` writes the biome `Arrakis_LobeTest` (a copy of the pre-round Arrakis biome with every export renamed `LT_*`, rock replaced by one land-mass body in `Arrakis_V1` only over the test field `Density/LT_Field.json`), and the world structure `Arrakis_LobeTest`. `tools/showcase/Use-LobeTest.ps1 -WorldName <name>` points a freshly created Dunes of Arrakis world at it (the Create World screen cannot choose a structure; it also deletes the world's chunks and saved player positions, so it can be re-run after each redeploy).
+First version: nine tiles of two ovals (2800 x 1700 spun 25 degrees, 1500 x 800 spun -40 degrees) on a 13 km ring. Second version (current), on request: one oval per tile, 800 x 400 semi-axes, spun 25 degrees, ring 4 km; all noise scales and amplitudes of the first version multiplied by 0.3 so they suit the smaller oval. Tile 1 at the origin (spawn), 2 to 9 clockwise from north; tile 1 is the raw oval. In tiles 2 to 8 the noise is added in metres and fades to nothing deeper than the amplitudes plus 100 m, so the inside stays solid; tile 9 is the previous method for comparison.
+
+| Tile | Lobes (scale / amplitude, m) | Bays | Coast detail |
+| --- | --- | --- | --- |
+| 1 (origin) | none, raw oval | none | none |
+| 2 (N) | none | none | +/-40 at 60 |
+| 3 (NE) | 360 / 90 | 105 / 25 | yes |
+| 4 (E) | 210 / 90 | 75 / 25 | yes |
+| 5 (SE) | 360 / 180 | 120 / 45 | yes |
+| 6 (S) | 210 / 180 | 75 / 45 | yes |
+| 7 (SW) | 300 / 300 | 90 / 75 | yes |
+| 8 (W) | 360 / 90 | 45 / 90 | yes |
+| 9 (NW) | previous method: class A scales 480 / 150, +/-0.45 and +/-0.14 of the half-axis, no fade | | yes |
+
+Render (seed 1791436655886, real generator, 12 km at 6 m per pixel): `tools/preview/out/continent/lobetest_overview_2000px.png`. `Spin` is the angle of the major axis from east towards south (checked against the render), the same as the angle in `continent-shapes-v2.json`.
+
+### Internal terrain noise, and the variant showcase
+
+Finding from the in-game screenshots of the flat-top test: the ridges, pits and sand holes inside an island are not the outline noise but the rock variant's own terrain (it is how the mountains are built). Removing it (tile 1 as a flat plateau) gives a smooth oval; the other tiles kept `Arrakis_V1`. So the outline noise and the interior terrain are separate things, and the "sieve" of sand holes inside land masses comes from the variants.
+
+Variant showcase (replaces the lobe test in the jar; `tools/preview/showcase_lobes.js` stays for later): `tools/preview/showcase_variants.js` writes biome `Arrakis_VariantTest` and world structure `Arrakis_VariantTest` (use `tools\showcase\Use-LobeTest.ps1 -WorldName <name> -WorldStructure Arrakis_VariantTest`). Ten raw ovals (800 x 400 semi-axes, spin 25 degrees, no outline noise), one per rock variant Arrakis_V1 to V10, each the variant lowered 8 blocks as in the real land masses, on a grid aligned with the ovals' own axes with 75 m between neighbours: V1 (0, 0), V2 (1518, 708), V3 (-370, 793), V4 (1148, 1501), V5 (370, -793), V6 (1888, -85), V7 (-740, 1586), V8 (778, 2294), V9 (740, -1586), V10 (2258, -878). Render `tools/preview/out/continent/varianttest_overview.png` (8 km at 4 m per pixel). In the render V1 and V4 are nearly solid, V5 and V2 mostly solid with holes, V6, V8, V9, V10 have many sand holes, V3 and V7 are mostly sand with islands of rock: the sieve effect is strongest in those. If the continents are to be solid, the interiors need something that does not depend on the variant (a floor under the interior, or only using the solid variants).
+
+### The odd cutouts in the variant showcase
+
+Report (`oddnoise.png`, variant test world): small irregular cutouts in the rock, squiggles and T shapes, that go to bedrock, on every variant.
+Cause, measured with the real engine (`tools/worldscan/scan.sh` with `WS=Arrakis_VariantTest`, `tools/worldscan/holes.js`; V5 oval, 768 x 768 blocks, seed 1791436655886): every rock variant recipe starts with `Min(cave mask, terrain)` and the cave mask is a `Graph` node on the vanilla `Plains1_Caves` graph (ContentLayer Priority0). Where the graph's tunnels cross the depth the root rule reads (4 blocks below sand level), the root rule removes the whole column of rock. The column is left as sand from bedrock to sand level (one example: Rock_Bedrock Y0, Arrakis_Sand Y1-79, then air), which is what the screenshot shows.
+- With the graph: 118 enclosed cutouts (115 under 2000 columns, median 70 columns), 40,738 columns in all. Graph nodes replaced by constant 1 (13 nodes): 4 cutouts, all large gaps that belong to the variant's own terrain. The preview render (`RealPreview`) does not evaluate the graph and shows no difference, so this needed the real engine.
+- The real build is not affected: `caves.js` replaces the 13 Plains1 cave terms with the Arrakis cave system. A scan of 768 x 768 blocks of the class D mass (16832, -17600) finds 7 cutouts (the larger variant gaps, 157 to 6219 columns, none of the small squiggles).
+- Fix for the showcase: `showcase_variants.js` now switches the graph off (and says so in its output).
+
+### Decision: rock variants for the continents (user feedback on the variant showcase, cave graph off)
+
+The continents use Arrakis_V1, V5, V8, V4 and V10 (one per continent, five continents). V7 and V3 are kept out of the continents (mostly sand with islands of rock) but stay available to the large islands. V2, V6 and V9 were not placed in either list. Not yet decided: which of the five goes to which continent; the outline (lobe and bay) noise for the continents (the lobe test tiles were only judged for their interior so far).
+
+### Decision update: variant per continent
+
+Replaces the earlier list: green = Arrakis_V1, red = V4, brown = V8, purple = V10, blue = V5 (chosen to keep the long thin mountain ranges solid). V7 and V3 stay out of the continents; V2, V6, V9 remain in the island pool.
+
+### Landlocked sand (question for the worms)
+
+Sandworms come from Arrakis sand, so sand enclosed by rock needs a rule. The generator itself cannot know (a column is generated without knowledge of the rest of the world), but it can be measured from the generator's own rock field: `tools/preview/landlocked.js` labels connected regions of sand in a coarse render dump and calls a region landlocked when it never reaches the edge of the square. On the stage 3 world (old ellipses, seed 1791436655886, 50 m grid): open sand 1824 km2; 7,591 landlocked pockets of 106 km2 in all, of which 5,142 under 0.01 km2, 2,348 of 0.01-0.1, 98 of 0.1-1 km2, and 3 over 1 km2 (largest 4.5 km2). Treating channels narrower than 100 m as closed (a worm needs room to pass; erosion of 1 column): 3,496 pockets, 170 km2, and the large central hollow of the old drawing (111 km2 at (7858, -3848)) becomes landlocked, because it only opened to the desert through channels under 100 m. So the answer depends strongly on the minimum width.
+
+## Round 8, rebuild from the new drawing (five continents)
+
+Built by `tools/preview/continent.js` (rewritten; the first version, thirty ellipses and twenty regions, is in git history) from `tools/continent-shapes-v2.json`.
+
+**Continents and variants.** Five continents = the five fill colours of the drawing. Variants chosen by the user for solidity of the long thin ranges: green = Arrakis_V1, red = V4, brown = V8, purple = V10, blue = V5. V7 and V3 stay out of the continents (large islands may still use them; the random islands and outcrops keep the ten-variant pick, so V2, V6, V9 are in that pool too). Each continent is one rock body: a copy of the Land mass body with only its variant kept (main chain and the root rule's chain pruned), lowered 8 blocks, the coast rule, its own footprint. One variant per continent, so there are no region seams inside a continent.
+
+**Edge noise: the blend.** Tile 3 (gentle) and tile 7 (strong) of the lobe test, defined relative to each ellipse (amplitudes in proportion to the minor half-axis: lobes 0.225 gentle / 0.75 strong, bays 0.0625 / 0.1875; capped at 250 / 600 m for lobes and 70 / 180 m for bays; scales in proportion to the mean half-axis: 0.64 / 0.53 for lobes, 0.19 / 0.16 for bays), blended along the coast by a slow noise (scale 6 km, 0 = gentle, 1 = strong), with fine coast detail (+/-30 m at 60 m). Four size classes share the unit noise (mean half-axis under 350, 700, 1400 m, above; representative 250, 500, 1000, 2000 m). The noise acts in metres and fades out below the sum of its amplitudes plus 100 m, so interiors stay solid. Files: `Density/Continent/Arrakis_Cont_*.json` (one field per continent with its blended edge noise), `Arrakis_Cont_Blend`, unit noise per class.
+
+**Seams.** Only the continents that nearly touch need a rule: nominal gaps purple-blue 309 m, purple-brown 336 m, green-blue 424 m, purple-green 811 m (blue-red 1913 m is left alone). Along the middle of each gap (equal distance from both continents, found with one single-node lattice distance field per continent) the rock bodies of those continents are capped like before (-80 .. +40 m, band 150-400 m). Real-engine renders at 6 m per pixel of the purple-blue and purple-brown gaps show the sand channel intact (the coasts do not merge); `v2_gap_*.png`.
+
+**Origin.** The origin is inside brown shape 99 (440 x 207 m); the old guaranteed island at (640, -480) (34 copies) and the starting outcrop (3 copies of its field) are switched off. Spawn (real engine, three seeds): seed 42 at (0.5, 99, 0.5), seed 1791831155772 at (0.5, 109, 0.5), both rock with air above; seed 1791436655886 at (21.5, 82, -60.5), 65 m from the origin. Spawn search time went from 4.7 s to 17 s in the harness because the first chunk waits for the generator load (see cost).
+
+**Caves and ore.** `caves.js` built its "large mass" inside test from the first five terms of `Arrakis_Inside` and so left the continents out; it now includes the continent term. Real-engine scan of 768 x 768 blocks of the blue continent's big ellipse (13248, -9152): 71.1 M blocks of rock, hollow 8.9% of the rock body, a deep chamber 19 m from the centre, all five ores present (17,068 blocks; copper highest at Base -17..+53, thorium lowest at Base -76..-59), 0 sand columns with air under the surface (8,736 sand columns checked, `tools/worldscan/undersand.js`).
+
+**Islands.** The frequency rules of the first version carry over unchanged (lattice distance of 837 points at 600 m spacing, plus axis points for the thin ellipses). Counts on seed 1791436655886 (50 m grid, `tools/preview/islandstats.js`, now reading the rotated shapes): 0-3 km from the coast 249 land masses (one per 1.6 km; target 1 to 1.5), 3-10 km 148 (2.3 km), beyond 10 km 27 (5.8 km; target 4 to 6, 25 of the 27 small). Large masses 10 / 2 / 0; no huge ones. Rock is 11.1% of the 50 km square (the drawing covers 9%).
+
+**Cost.** Asset loading expands every import as a copy; `tools/preview/expand.js` counts the nodes: before this round 0.56 M, stage 3 6.7 M, first build of the new continents 42.8 M (load 16.7 s against 4.0 s in the harness), final 9.1 M (load 7.9 s against 4.8 s). What cost it: the seam rule built from the ellipse fields, and the union field read by about 50 recipe sites. The fix: single-node lattice distance fields for the seam, and the union without the seam cap (the cap is only applied to the rock bodies).
+Biome file 3.69 MB; the new Density files are in `Density/Continent/`.

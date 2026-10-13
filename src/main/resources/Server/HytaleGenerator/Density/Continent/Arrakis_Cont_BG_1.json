@@ -1,0 +1,42 @@
+{
+  "$Comment": "Unit bay noise (gentle), size class 1: scale 95 m.",
+  "Type": "Exported",
+  "ExportAs": "Arrakis_Cont_BG_1",
+  "SingleInstance": true,
+  "Skip": false,
+  "Inputs": [
+    {
+      "Type": "YOverride",
+      "Value": 0,
+      "Skip": false,
+      "Inputs": [
+        {
+          "Type": "Cache",
+          "Capacity": 3,
+          "Skip": false,
+          "Inputs": [
+            {
+              "Type": "Normalizer",
+              "FromMin": -1,
+              "FromMax": 1,
+              "ToMin": -1,
+              "ToMax": 1,
+              "Skip": false,
+              "Inputs": [
+                {
+                  "Type": "SimplexNoise2D",
+                  "Scale": 95,
+                  "Octaves": 2,
+                  "Lacunarity": 2,
+                  "Persistence": 0.5,
+                  "Seed": "Arrakis_Cont_BaysG_1",
+                  "Skip": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

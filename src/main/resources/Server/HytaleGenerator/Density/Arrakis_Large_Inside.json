@@ -1,5 +1,5 @@
 {
-  "$Comment": "About how far inside the shore of a large island or land mass a column is (regular islands: metres; huge land masses: less than a metre per metre). Medium and small outcrops are left out.",
+  "$Comment": "About how far inside the shore of a large island or land mass a column is (regular islands: metres; huge land masses: less than a metre per metre). Medium and small outcrops are left out. The continents count as large land masses (metres inside the shore).",
   "Type": "Exported",
   "ExportAs": "Arrakis_Large_Inside",
   "SingleInstance": true,
@@ -46,13 +46,7 @@
                               {
                                 "Type": "List",
                                 "Skip": false,
-                                "Positions": [
-                                  {
-                                    "X": 640,
-                                    "Y": 0,
-                                    "Z": -480
-                                  }
-                                ]
+                                "Positions": []
                               },
                               {
                                 "$Comment": "Keep only grid centres far enough from the guaranteed island.",
@@ -65,13 +59,7 @@
                                   "Positions": {
                                     "Type": "List",
                                     "Skip": false,
-                                    "Positions": [
-                                      {
-                                        "X": 640,
-                                        "Y": 0,
-                                        "Z": -480
-                                      }
-                                    ]
+                                    "Positions": []
                                   },
                                   "ReturnType": {
                                     "Type": "Curve",
@@ -112,42 +100,57 @@
                                     "Skip": false,
                                     "Seed": "Arrakis_Islands_Drop",
                                     "FieldFunction": {
-                                      "$Comment": "Chance that a regular large island exists, by latitude (north is -Z).",
-                                      "Type": "CurveMapper",
-                                      "Curve": {
-                                        "Type": "Manual",
-                                        "Points": [
-                                          {
-                                            "In": -27000,
-                                            "Out": 0.1
-                                          },
-                                          {
-                                            "In": -21000,
-                                            "Out": 0.6
-                                          },
-                                          {
-                                            "In": -1000,
-                                            "Out": 0.7
-                                          },
-                                          {
-                                            "In": 3000,
-                                            "Out": 0.6
-                                          },
-                                          {
-                                            "In": 12000,
-                                            "Out": 0.3
-                                          },
-                                          {
-                                            "In": 20000,
-                                            "Out": 0.1
-                                          }
-                                        ]
-                                      },
+                                      "Type": "Multiplier",
                                       "Skip": false,
                                       "Inputs": [
                                         {
-                                          "Type": "ZValue",
-                                          "Skip": false
+                                          "$Comment": "Chance that a regular large island exists, by latitude (north is -Z).",
+                                          "Type": "CurveMapper",
+                                          "Curve": {
+                                            "Type": "Manual",
+                                            "Points": [
+                                              {
+                                                "In": -27000,
+                                                "Out": 0.1
+                                              },
+                                              {
+                                                "In": -21000,
+                                                "Out": 0.6
+                                              },
+                                              {
+                                                "In": -12000,
+                                                "Out": 0.5
+                                              },
+                                              {
+                                                "In": -1000,
+                                                "Out": 0.7
+                                              },
+                                              {
+                                                "In": 3000,
+                                                "Out": 0.6
+                                              },
+                                              {
+                                                "In": 12000,
+                                                "Out": 0.3
+                                              },
+                                              {
+                                                "In": 20000,
+                                                "Out": 0.1
+                                              }
+                                            ]
+                                          },
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "ZValue",
+                                              "Skip": false
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Island_Frequency"
                                         }
                                       ]
                                     },
@@ -179,46 +182,61 @@
                                   "Skip": false,
                                   "Seed": "Arrakis_Mass_Drop_Large1",
                                   "FieldFunction": {
-                                    "$Comment": "Chance that a Large land mass exists, by latitude (north is -Z).",
-                                    "Type": "CurveMapper",
-                                    "Curve": {
-                                      "Type": "Manual",
-                                      "Points": [
-                                        {
-                                          "In": -27000,
-                                          "Out": 0.05
-                                        },
-                                        {
-                                          "In": -21000,
-                                          "Out": 0.45
-                                        },
-                                        {
-                                          "In": -5000,
-                                          "Out": 0.5
-                                        },
-                                        {
-                                          "In": -1500,
-                                          "Out": 0.12
-                                        },
-                                        {
-                                          "In": 4000,
-                                          "Out": 0.12
-                                        },
-                                        {
-                                          "In": 12000,
-                                          "Out": 0.07
-                                        },
-                                        {
-                                          "In": 20000,
-                                          "Out": 0.05
-                                        }
-                                      ]
-                                    },
+                                    "Type": "Multiplier",
                                     "Skip": false,
                                     "Inputs": [
                                       {
-                                        "Type": "ZValue",
-                                        "Skip": false
+                                        "$Comment": "Chance that a Large land mass exists, by latitude (north is -Z).",
+                                        "Type": "CurveMapper",
+                                        "Curve": {
+                                          "Type": "Manual",
+                                          "Points": [
+                                            {
+                                              "In": -27000,
+                                              "Out": 0.05
+                                            },
+                                            {
+                                              "In": -21000,
+                                              "Out": 0.3
+                                            },
+                                            {
+                                              "In": -12000,
+                                              "Out": 0.5
+                                            },
+                                            {
+                                              "In": -5000,
+                                              "Out": 0.3
+                                            },
+                                            {
+                                              "In": -1500,
+                                              "Out": 0.12
+                                            },
+                                            {
+                                              "In": 4000,
+                                              "Out": 0.08
+                                            },
+                                            {
+                                              "In": 12000,
+                                              "Out": 0.04
+                                            },
+                                            {
+                                              "In": 20000,
+                                              "Out": 0.02
+                                            }
+                                          ]
+                                        },
+                                        "Skip": false,
+                                        "Inputs": [
+                                          {
+                                            "Type": "ZValue",
+                                            "Skip": false
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "Type": "Imported",
+                                        "Skip": false,
+                                        "Name": "Arrakis_Island_Frequency"
                                       }
                                     ]
                                   },
@@ -249,46 +267,61 @@
                                   "Skip": false,
                                   "Seed": "Arrakis_Mass_Drop_Large2",
                                   "FieldFunction": {
-                                    "$Comment": "Chance that a Large land mass exists, by latitude (north is -Z).",
-                                    "Type": "CurveMapper",
-                                    "Curve": {
-                                      "Type": "Manual",
-                                      "Points": [
-                                        {
-                                          "In": -27000,
-                                          "Out": 0.05
-                                        },
-                                        {
-                                          "In": -21000,
-                                          "Out": 0.45
-                                        },
-                                        {
-                                          "In": -5000,
-                                          "Out": 0.5
-                                        },
-                                        {
-                                          "In": -1500,
-                                          "Out": 0.12
-                                        },
-                                        {
-                                          "In": 4000,
-                                          "Out": 0.12
-                                        },
-                                        {
-                                          "In": 12000,
-                                          "Out": 0.07
-                                        },
-                                        {
-                                          "In": 20000,
-                                          "Out": 0.05
-                                        }
-                                      ]
-                                    },
+                                    "Type": "Multiplier",
                                     "Skip": false,
                                     "Inputs": [
                                       {
-                                        "Type": "ZValue",
-                                        "Skip": false
+                                        "$Comment": "Chance that a Large land mass exists, by latitude (north is -Z).",
+                                        "Type": "CurveMapper",
+                                        "Curve": {
+                                          "Type": "Manual",
+                                          "Points": [
+                                            {
+                                              "In": -27000,
+                                              "Out": 0.05
+                                            },
+                                            {
+                                              "In": -21000,
+                                              "Out": 0.3
+                                            },
+                                            {
+                                              "In": -12000,
+                                              "Out": 0.5
+                                            },
+                                            {
+                                              "In": -5000,
+                                              "Out": 0.3
+                                            },
+                                            {
+                                              "In": -1500,
+                                              "Out": 0.12
+                                            },
+                                            {
+                                              "In": 4000,
+                                              "Out": 0.08
+                                            },
+                                            {
+                                              "In": 12000,
+                                              "Out": 0.04
+                                            },
+                                            {
+                                              "In": 20000,
+                                              "Out": 0.02
+                                            }
+                                          ]
+                                        },
+                                        "Skip": false,
+                                        "Inputs": [
+                                          {
+                                            "Type": "ZValue",
+                                            "Skip": false
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "Type": "Imported",
+                                        "Skip": false,
+                                        "Name": "Arrakis_Island_Frequency"
                                       }
                                     ]
                                   },
@@ -319,38 +352,49 @@
                                   "Skip": false,
                                   "Seed": "Arrakis_Mass_Drop_Huge1",
                                   "FieldFunction": {
-                                    "$Comment": "Chance that a Huge land mass exists, by latitude (north is -Z).",
-                                    "Type": "CurveMapper",
-                                    "Curve": {
-                                      "Type": "Manual",
-                                      "Points": [
-                                        {
-                                          "In": -22000,
-                                          "Out": 0
-                                        },
-                                        {
-                                          "In": -17000,
-                                          "Out": 0.35
-                                        },
-                                        {
-                                          "In": -12000,
-                                          "Out": 0.5
-                                        },
-                                        {
-                                          "In": -6000,
-                                          "Out": 0.45
-                                        },
-                                        {
-                                          "In": -3000,
-                                          "Out": 0
-                                        }
-                                      ]
-                                    },
+                                    "Type": "Multiplier",
                                     "Skip": false,
                                     "Inputs": [
                                       {
-                                        "Type": "ZValue",
-                                        "Skip": false
+                                        "$Comment": "Chance that a Huge land mass exists, by latitude (north is -Z).",
+                                        "Type": "CurveMapper",
+                                        "Curve": {
+                                          "Type": "Manual",
+                                          "Points": [
+                                            {
+                                              "In": -22000,
+                                              "Out": 0
+                                            },
+                                            {
+                                              "In": -17000,
+                                              "Out": 0.35
+                                            },
+                                            {
+                                              "In": -12000,
+                                              "Out": 0.5
+                                            },
+                                            {
+                                              "In": -6000,
+                                              "Out": 0.45
+                                            },
+                                            {
+                                              "In": -3000,
+                                              "Out": 0
+                                            }
+                                          ]
+                                        },
+                                        "Skip": false,
+                                        "Inputs": [
+                                          {
+                                            "Type": "ZValue",
+                                            "Skip": false
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "Type": "Imported",
+                                        "Skip": false,
+                                        "Name": "Arrakis_Island_Frequency"
                                       }
                                     ]
                                   },
@@ -381,38 +425,49 @@
                                   "Skip": false,
                                   "Seed": "Arrakis_Mass_Drop_Huge2",
                                   "FieldFunction": {
-                                    "$Comment": "Chance that a Huge land mass exists, by latitude (north is -Z).",
-                                    "Type": "CurveMapper",
-                                    "Curve": {
-                                      "Type": "Manual",
-                                      "Points": [
-                                        {
-                                          "In": -22000,
-                                          "Out": 0
-                                        },
-                                        {
-                                          "In": -17000,
-                                          "Out": 0.35
-                                        },
-                                        {
-                                          "In": -12000,
-                                          "Out": 0.5
-                                        },
-                                        {
-                                          "In": -6000,
-                                          "Out": 0.45
-                                        },
-                                        {
-                                          "In": -3000,
-                                          "Out": 0
-                                        }
-                                      ]
-                                    },
+                                    "Type": "Multiplier",
                                     "Skip": false,
                                     "Inputs": [
                                       {
-                                        "Type": "ZValue",
-                                        "Skip": false
+                                        "$Comment": "Chance that a Huge land mass exists, by latitude (north is -Z).",
+                                        "Type": "CurveMapper",
+                                        "Curve": {
+                                          "Type": "Manual",
+                                          "Points": [
+                                            {
+                                              "In": -22000,
+                                              "Out": 0
+                                            },
+                                            {
+                                              "In": -17000,
+                                              "Out": 0.35
+                                            },
+                                            {
+                                              "In": -12000,
+                                              "Out": 0.5
+                                            },
+                                            {
+                                              "In": -6000,
+                                              "Out": 0.45
+                                            },
+                                            {
+                                              "In": -3000,
+                                              "Out": 0
+                                            }
+                                          ]
+                                        },
+                                        "Skip": false,
+                                        "Inputs": [
+                                          {
+                                            "Type": "ZValue",
+                                            "Skip": false
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "Type": "Imported",
+                                        "Skip": false,
+                                        "Name": "Arrakis_Island_Frequency"
                                       }
                                     ]
                                   },
@@ -537,46 +592,61 @@
                                   "Skip": false,
                                   "Seed": "Arrakis_Mass_Drop_Large1",
                                   "FieldFunction": {
-                                    "$Comment": "Chance that a Large land mass exists, by latitude (north is -Z).",
-                                    "Type": "CurveMapper",
-                                    "Curve": {
-                                      "Type": "Manual",
-                                      "Points": [
-                                        {
-                                          "In": -27000,
-                                          "Out": 0.05
-                                        },
-                                        {
-                                          "In": -21000,
-                                          "Out": 0.45
-                                        },
-                                        {
-                                          "In": -5000,
-                                          "Out": 0.5
-                                        },
-                                        {
-                                          "In": -1500,
-                                          "Out": 0.12
-                                        },
-                                        {
-                                          "In": 4000,
-                                          "Out": 0.12
-                                        },
-                                        {
-                                          "In": 12000,
-                                          "Out": 0.07
-                                        },
-                                        {
-                                          "In": 20000,
-                                          "Out": 0.05
-                                        }
-                                      ]
-                                    },
+                                    "Type": "Multiplier",
                                     "Skip": false,
                                     "Inputs": [
                                       {
-                                        "Type": "ZValue",
-                                        "Skip": false
+                                        "$Comment": "Chance that a Large land mass exists, by latitude (north is -Z).",
+                                        "Type": "CurveMapper",
+                                        "Curve": {
+                                          "Type": "Manual",
+                                          "Points": [
+                                            {
+                                              "In": -27000,
+                                              "Out": 0.05
+                                            },
+                                            {
+                                              "In": -21000,
+                                              "Out": 0.3
+                                            },
+                                            {
+                                              "In": -12000,
+                                              "Out": 0.5
+                                            },
+                                            {
+                                              "In": -5000,
+                                              "Out": 0.3
+                                            },
+                                            {
+                                              "In": -1500,
+                                              "Out": 0.12
+                                            },
+                                            {
+                                              "In": 4000,
+                                              "Out": 0.08
+                                            },
+                                            {
+                                              "In": 12000,
+                                              "Out": 0.04
+                                            },
+                                            {
+                                              "In": 20000,
+                                              "Out": 0.02
+                                            }
+                                          ]
+                                        },
+                                        "Skip": false,
+                                        "Inputs": [
+                                          {
+                                            "Type": "ZValue",
+                                            "Skip": false
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "Type": "Imported",
+                                        "Skip": false,
+                                        "Name": "Arrakis_Island_Frequency"
                                       }
                                     ]
                                   },
@@ -914,46 +984,61 @@
                                   "Skip": false,
                                   "Seed": "Arrakis_Mass_Drop_Large2",
                                   "FieldFunction": {
-                                    "$Comment": "Chance that a Large land mass exists, by latitude (north is -Z).",
-                                    "Type": "CurveMapper",
-                                    "Curve": {
-                                      "Type": "Manual",
-                                      "Points": [
-                                        {
-                                          "In": -27000,
-                                          "Out": 0.05
-                                        },
-                                        {
-                                          "In": -21000,
-                                          "Out": 0.45
-                                        },
-                                        {
-                                          "In": -5000,
-                                          "Out": 0.5
-                                        },
-                                        {
-                                          "In": -1500,
-                                          "Out": 0.12
-                                        },
-                                        {
-                                          "In": 4000,
-                                          "Out": 0.12
-                                        },
-                                        {
-                                          "In": 12000,
-                                          "Out": 0.07
-                                        },
-                                        {
-                                          "In": 20000,
-                                          "Out": 0.05
-                                        }
-                                      ]
-                                    },
+                                    "Type": "Multiplier",
                                     "Skip": false,
                                     "Inputs": [
                                       {
-                                        "Type": "ZValue",
-                                        "Skip": false
+                                        "$Comment": "Chance that a Large land mass exists, by latitude (north is -Z).",
+                                        "Type": "CurveMapper",
+                                        "Curve": {
+                                          "Type": "Manual",
+                                          "Points": [
+                                            {
+                                              "In": -27000,
+                                              "Out": 0.05
+                                            },
+                                            {
+                                              "In": -21000,
+                                              "Out": 0.3
+                                            },
+                                            {
+                                              "In": -12000,
+                                              "Out": 0.5
+                                            },
+                                            {
+                                              "In": -5000,
+                                              "Out": 0.3
+                                            },
+                                            {
+                                              "In": -1500,
+                                              "Out": 0.12
+                                            },
+                                            {
+                                              "In": 4000,
+                                              "Out": 0.08
+                                            },
+                                            {
+                                              "In": 12000,
+                                              "Out": 0.04
+                                            },
+                                            {
+                                              "In": 20000,
+                                              "Out": 0.02
+                                            }
+                                          ]
+                                        },
+                                        "Skip": false,
+                                        "Inputs": [
+                                          {
+                                            "Type": "ZValue",
+                                            "Skip": false
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "Type": "Imported",
+                                        "Skip": false,
+                                        "Name": "Arrakis_Island_Frequency"
                                       }
                                     ]
                                   },
@@ -1291,38 +1376,49 @@
                                   "Skip": false,
                                   "Seed": "Arrakis_Mass_Drop_Huge1",
                                   "FieldFunction": {
-                                    "$Comment": "Chance that a Huge land mass exists, by latitude (north is -Z).",
-                                    "Type": "CurveMapper",
-                                    "Curve": {
-                                      "Type": "Manual",
-                                      "Points": [
-                                        {
-                                          "In": -22000,
-                                          "Out": 0
-                                        },
-                                        {
-                                          "In": -17000,
-                                          "Out": 0.35
-                                        },
-                                        {
-                                          "In": -12000,
-                                          "Out": 0.5
-                                        },
-                                        {
-                                          "In": -6000,
-                                          "Out": 0.45
-                                        },
-                                        {
-                                          "In": -3000,
-                                          "Out": 0
-                                        }
-                                      ]
-                                    },
+                                    "Type": "Multiplier",
                                     "Skip": false,
                                     "Inputs": [
                                       {
-                                        "Type": "ZValue",
-                                        "Skip": false
+                                        "$Comment": "Chance that a Huge land mass exists, by latitude (north is -Z).",
+                                        "Type": "CurveMapper",
+                                        "Curve": {
+                                          "Type": "Manual",
+                                          "Points": [
+                                            {
+                                              "In": -22000,
+                                              "Out": 0
+                                            },
+                                            {
+                                              "In": -17000,
+                                              "Out": 0.35
+                                            },
+                                            {
+                                              "In": -12000,
+                                              "Out": 0.5
+                                            },
+                                            {
+                                              "In": -6000,
+                                              "Out": 0.45
+                                            },
+                                            {
+                                              "In": -3000,
+                                              "Out": 0
+                                            }
+                                          ]
+                                        },
+                                        "Skip": false,
+                                        "Inputs": [
+                                          {
+                                            "Type": "ZValue",
+                                            "Skip": false
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "Type": "Imported",
+                                        "Skip": false,
+                                        "Name": "Arrakis_Island_Frequency"
                                       }
                                     ]
                                   },
@@ -1616,38 +1712,49 @@
                                   "Skip": false,
                                   "Seed": "Arrakis_Mass_Drop_Huge2",
                                   "FieldFunction": {
-                                    "$Comment": "Chance that a Huge land mass exists, by latitude (north is -Z).",
-                                    "Type": "CurveMapper",
-                                    "Curve": {
-                                      "Type": "Manual",
-                                      "Points": [
-                                        {
-                                          "In": -22000,
-                                          "Out": 0
-                                        },
-                                        {
-                                          "In": -17000,
-                                          "Out": 0.35
-                                        },
-                                        {
-                                          "In": -12000,
-                                          "Out": 0.5
-                                        },
-                                        {
-                                          "In": -6000,
-                                          "Out": 0.45
-                                        },
-                                        {
-                                          "In": -3000,
-                                          "Out": 0
-                                        }
-                                      ]
-                                    },
+                                    "Type": "Multiplier",
                                     "Skip": false,
                                     "Inputs": [
                                       {
-                                        "Type": "ZValue",
-                                        "Skip": false
+                                        "$Comment": "Chance that a Huge land mass exists, by latitude (north is -Z).",
+                                        "Type": "CurveMapper",
+                                        "Curve": {
+                                          "Type": "Manual",
+                                          "Points": [
+                                            {
+                                              "In": -22000,
+                                              "Out": 0
+                                            },
+                                            {
+                                              "In": -17000,
+                                              "Out": 0.35
+                                            },
+                                            {
+                                              "In": -12000,
+                                              "Out": 0.5
+                                            },
+                                            {
+                                              "In": -6000,
+                                              "Out": 0.45
+                                            },
+                                            {
+                                              "In": -3000,
+                                              "Out": 0
+                                            }
+                                          ]
+                                        },
+                                        "Skip": false,
+                                        "Inputs": [
+                                          {
+                                            "Type": "ZValue",
+                                            "Skip": false
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "Type": "Imported",
+                                        "Skip": false,
+                                        "Name": "Arrakis_Island_Frequency"
                                       }
                                     ]
                                   },
@@ -1922,6 +2029,11 @@
                       ]
                     }
                   ]
+                },
+                {
+                  "Type": "Imported",
+                  "Skip": false,
+                  "Name": "Arrakis_Continent"
                 }
               ]
             }

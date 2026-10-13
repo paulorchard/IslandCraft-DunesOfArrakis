@@ -1,0 +1,133 @@
+{
+  "$Comment": "Metres inside the shore of the nearest of the five continents; -9999 where there is none.",
+  "Type": "Exported",
+  "ExportAs": "Arrakis_Continent",
+  "SingleInstance": true,
+  "Skip": false,
+  "Inputs": [
+    {
+      "Type": "YOverride",
+      "Value": 0,
+      "Skip": false,
+      "Inputs": [
+        {
+          "Type": "Cache",
+          "Capacity": 3,
+          "Skip": false,
+          "Inputs": [
+            {
+              "Type": "Mix",
+              "Skip": false,
+              "Inputs": [
+                {
+                  "Type": "Constant",
+                  "Skip": false,
+                  "Value": -9999
+                },
+                {
+                  "Type": "Max",
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "Imported",
+                      "Skip": false,
+                      "Name": "Arrakis_Cont_1"
+                    },
+                    {
+                      "Type": "Imported",
+                      "Skip": false,
+                      "Name": "Arrakis_Cont_2"
+                    },
+                    {
+                      "Type": "Imported",
+                      "Skip": false,
+                      "Name": "Arrakis_Cont_3"
+                    },
+                    {
+                      "Type": "Imported",
+                      "Skip": false,
+                      "Name": "Arrakis_Cont_4"
+                    },
+                    {
+                      "Type": "Imported",
+                      "Skip": false,
+                      "Name": "Arrakis_Cont_5"
+                    }
+                  ]
+                },
+                {
+                  "Type": "Min",
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "CurveMapper",
+                      "Curve": {
+                        "Type": "Manual",
+                        "Points": [
+                          {
+                            "In": -26370,
+                            "Out": 0
+                          },
+                          {
+                            "In": -26369,
+                            "Out": 1
+                          },
+                          {
+                            "In": 25796,
+                            "Out": 1
+                          },
+                          {
+                            "In": 25797,
+                            "Out": 0
+                          }
+                        ]
+                      },
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "XValue",
+                          "Skip": false
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "CurveMapper",
+                      "Curve": {
+                        "Type": "Manual",
+                        "Points": [
+                          {
+                            "In": -18058,
+                            "Out": 0
+                          },
+                          {
+                            "In": -18057,
+                            "Out": 1
+                          },
+                          {
+                            "In": 1930,
+                            "Out": 1
+                          },
+                          {
+                            "In": 1931,
+                            "Out": 0
+                          }
+                        ]
+                      },
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "ZValue",
+                          "Skip": false
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -88,6 +88,9 @@ public class RealPreview {
 
         if (System.getenv("FLOAT") != null) { floatReport(rock, cx, cz, size, Integer.parseInt(env("SAND_Y", "100"))); return; }
 
+        if (System.getenv("SEAMS") != null) { seams(rock, System.getenv("SEAMS")); return; }
+        if (System.getenv("COARSE") != null) { coarse(terrain, rock, cx, cz, size, res, out); return; }
+
         int w = (int) Math.round(size / res);
         float[] height = new float[w * w];
         boolean[] isRock = new boolean[w * w];
@@ -151,6 +154,136 @@ public class RealPreview {
         }
         ImageIO.write(img, "png", new File(out));
         log.printf("wrote %s: %dx%d px, %.1f m/px, rock %.1f%% of view%n", out, w, w, res, 100.0 * rockPx / (w * w));
+    }
+
+    /**
+     * Seam statistics. For every pair of overlapping ellipses of different regions: samples a grid (SEAM_RES m, default 25) over the overlap of the
+     * two nominal ellipses; a point is on the join when Arrakis_Continent_Join (best minus second-best region field) is under JOIN_MAX (default 60)
+     * and the second best is more than 100 m inside its shore. For those points the rock top is found as in the coarse render and classed as
+     * sand (no rock above Base + 4), low rock (below Base + 60) or full-height rock. Prints one line per pair.
+     */
+    static void seams(Density rock, String ellipseFile) throws Exception {
+        String json = new String(Files.readAllBytes(Paths.get(ellipseFile)));
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("\"id\":\\s*(\\d+),\\s*\"x\":\\s*(-?\\d+),\\s*\"z\":\\s*(-?\\d+),\\s*\"halfEW\":\\s*(\\d+),\\s*\"halfNS\":\\s*(\\d+),\\s*\"class\":\\s*\"([A-D])\",\\s*\"region\":\\s*(\\d+)").matcher(json);
+        java.util.List<double[]> el = new java.util.ArrayList<>();
+        while (m.find()) el.add(new double[] {Double.parseDouble(m.group(1)), Double.parseDouble(m.group(2)), Double.parseDouble(m.group(3)), Double.parseDouble(m.group(4)), Double.parseDouble(m.group(5)), Double.parseDouble(m.group(7))});
+        double res = Double.parseDouble(env("SEAM_RES", "25")), joinMax = Double.parseDouble(env("JOIN_MAX", "60"));
+        Density join = DensityAsset.getExportedAsset("Arrakis_Continent_Join").threadInstances.get(WorkerIndexer.Id.MAIN);
+        Density.Context ctx = new Density.Context();
+        ctx.position = new Vector3d();
+        ctx.distanceToBiomeEdge = 1000;
+        long tot = 0, totSand = 0, totLow = 0, totFull = 0;
+        log.println("pair | join points | sand % | low rock % | full-height %");
+        for (int a = 0; a < el.size(); a++) for (int b = a + 1; b < el.size(); b++) {
+            double[] A = el.get(a), B = el.get(b);
+            if (A[5] == B[5]) continue;
+            double x0 = Math.max(A[1] - A[3], B[1] - B[3]), x1 = Math.min(A[1] + A[3], B[1] + B[3]), z0 = Math.max(A[2] - A[4], B[2] - B[4]), z1 = Math.min(A[2] + A[4], B[2] + B[4]);
+            if (x0 >= x1 || z0 >= z1) continue;
+            long n = 0, sand = 0, low = 0, full = 0, lens = 0;
+            for (double z = z0; z < z1; z += res) for (double x = x0; x < x1; x += res) {
+                double ua = Math.pow((x - A[1]) / A[3], 2) + Math.pow((z - A[2]) / A[4], 2), ub = Math.pow((x - B[1]) / B[3], 2) + Math.pow((z - B[2]) / B[4], 2);
+                if (ua >= 1 || ub >= 1) continue;
+                lens++;
+                ctx.position.set(x, 100, z);
+                if (join.evaluate(ctx) > joinMax) continue;
+                float h = 0;
+                for (int y = 260; y > 70; y -= 8) { ctx.position.set(x, y, z); if (rock.evaluate(ctx) > 0) { h = y; break; } }
+                n++;
+                if (h < 84) sand++; else if (h < 140) low++; else full++;
+            }
+            if (lens == 0) continue;
+            log.printf("%02d-%02d (regions %d,%d) | %d (lens %d) | %.0f | %.0f | %.0f%n", (int) A[0], (int) B[0], (int) A[5], (int) B[5], n, lens,
+                n == 0 ? 0 : 100.0 * sand / n, n == 0 ? 0 : 100.0 * low / n, n == 0 ? 0 : 100.0 * full / n);
+            tot += n; totSand += sand; totLow += low; totFull += full;
+        }
+        log.printf("all pairs: %d points; sand %.0f%%, low rock %.0f%%, full-height %.0f%%%n", tot, 100.0 * totSand / tot, 100.0 * totLow / tot, 100.0 * totFull / tot);
+    }
+
+    /**
+     * Whole-world render. Per column: the rock density is read from Y 260 down in steps of 8 until it is positive (the top of the rock, to
+     * within 8 blocks); a column counts as rock when that top is at least Base + 4. Colour is the height. Env: ELLIPSES = path of the
+     * continent ellipse json (outlines drawn in red), PICK = name of a density export to colour by instead (value -1..1 mapped to a hue),
+     * and the usual output log. Prints the rock share.
+     */
+    static void coarse(Density terrain, Density rock, double cx, double cz, double size, double res, String out) throws Exception {
+        int w = (int) Math.round(size / res);
+        float[] top = new float[w * w];
+        Density pick = null;
+        String pickName = System.getenv("PICK");
+        if (pickName != null && !pickName.isEmpty()) {
+            DensityAsset.Exported e = DensityAsset.getExportedAsset(pickName);
+            pick = e == null ? null : e.threadInstances.get(WorkerIndexer.Id.MAIN);
+        }
+        float[] pv = pick == null ? null : new float[w * w];
+        Density.Context ctx = new Density.Context();
+        ctx.position = new Vector3d();
+        ctx.distanceToBiomeEdge = 1000;
+        long t0 = System.nanoTime(), rockCols = 0;
+        for (int j = 0; j < w; j++) {
+            for (int i = 0; i < w; i++) {
+                double x = cx - size / 2 + i * res, z = cz - size / 2 + j * res;
+                float h = 0;
+                for (int y = 260; y > 70; y -= 8) {
+                    ctx.position.set(x, y, z);
+                    if (rock.evaluate(ctx) > 0) { h = y; break; }
+                }
+                top[j * w + i] = h;
+                if (h >= 84) rockCols++;
+                if (pv != null) { ctx.position.set(x, 100, z); pv[j * w + i] = (float) pick.evaluate(ctx); }
+            }
+            if (j % 50 == 0) log.printf("row %d of %d, %d ms%n", j, w, (System.nanoTime() - t0) / 1_000_000);
+        }
+        log.printf("coarse: %d x %d columns of %.0f m in %d ms; rock %.2f%% of the square%n", w, w, res, (System.nanoTime() - t0) / 1_000_000, 100.0 * rockCols / ((double) w * w));
+        String valDump = System.getenv("VALDUMP");
+        if (pv != null && valDump != null && !valDump.isEmpty()) { // the PICK density's value at every column, as little-endian floats
+            java.nio.ByteBuffer bb = java.nio.ByteBuffer.allocate(w * w * 4).order(java.nio.ByteOrder.LITTLE_ENDIAN);
+            for (int k = 0; k < w * w; k++) bb.putFloat(pv[k]);
+            Files.write(Paths.get(valDump), bb.array());
+        }
+        String dump = System.getenv("DUMP");
+        if (dump != null && !dump.isEmpty()) { // rock top / 2 as one unsigned byte per column, row by row from the north-west corner (stats scripts read this)
+            byte[] bytes = new byte[w * w];
+            for (int k = 0; k < w * w; k++) bytes[k] = (byte) Math.min(255, Math.round(top[k] / 2));
+            Files.write(Paths.get(dump), bytes);
+        }
+        BufferedImage img = new BufferedImage(w, w, BufferedImage.TYPE_INT_RGB);
+        for (int j = 0; j < w; j++) for (int i = 0; i < w; i++) {
+            float h = top[j * w + i];
+            int rgb;
+            if (h >= 84) {
+                if (pv != null) { java.awt.Color col = java.awt.Color.getHSBColor((float) ((pv[j * w + i] + 1) / 2.0 * 0.85), 0.75f, 0.35f + 0.65f * Math.min(1f, (h - 84) / 140f)); rgb = col.getRGB(); }
+                else { double t = Math.min(1, (h - 84) / 160.0); rgb = ((int) (150 + 60 * t) << 16) | ((int) (95 + 55 * t) << 8) | (int) (60 + 45 * t); }
+            } else rgb = (222 << 16) | (190 << 8) | 128;
+            img.setRGB(i, j, rgb);
+        }
+        String ell = System.getenv("ELLIPSES");
+        if (ell != null && !ell.isEmpty()) {
+            String json = new String(Files.readAllBytes(Paths.get(ell)));
+            java.util.regex.Matcher m = java.util.regex.Pattern.compile("\"id\":\\s*(\\d+),\\s*\"x\":\\s*(-?\\d+),\\s*\"z\":\\s*(-?\\d+),\\s*\"halfEW\":\\s*(\\d+),\\s*\"halfNS\":\\s*(\\d+)(?:,\\s*\"angle\":\\s*(-?[\\d.]+))?").matcher(json);
+            java.awt.Graphics2D g = img.createGraphics();
+            boolean labels = System.getenv("NOLABELS") == null;
+            g.setColor(new java.awt.Color(230, 20, 20));
+            g.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, Math.max(10, w / 70)));
+            while (m.find()) {
+                double ex = Double.parseDouble(m.group(2)), ez = Double.parseDouble(m.group(3)), hx = Double.parseDouble(m.group(4)), hz = Double.parseDouble(m.group(5));
+                double th = m.group(6) == null ? 0 : Math.toRadians(Double.parseDouble(m.group(6))), ct = Math.cos(th), st = Math.sin(th);
+                int px = -1, pz = -1;
+                for (int k = 0; k <= 120; k++) {
+                    double a = k / 120.0 * Math.PI * 2, lx = hx * Math.cos(a), lz = hz * Math.sin(a);
+                    int qx = (int) ((ex + lx * ct - lz * st - (cx - size / 2)) / res), qz = (int) ((ez + lx * st + lz * ct - (cz - size / 2)) / res);
+                    if (k > 0) g.drawLine(px, pz, qx, qz);
+                    px = qx; pz = qz;
+                }
+                if (labels) g.drawString(m.group(1), (int) ((ex - (cx - size / 2)) / res) - 6, (int) ((ez - (cz - size / 2)) / res) + 4);
+            }
+            // the origin
+            g.setColor(java.awt.Color.BLACK);
+            int ox = (int) ((0 - (cx - size / 2)) / res), oz = (int) ((0 - (cz - size / 2)) / res);
+            g.drawLine(ox - 8, oz, ox + 8, oz); g.drawLine(ox, oz - 8, ox, oz + 8);
+            g.dispose();
+        }
+        ImageIO.write(img, "png", new File(out));
+        log.println("wrote " + out);
     }
 
     /** Flood fill from the origin over 1 m columns, moving only where the height changes by at most 1 block. */

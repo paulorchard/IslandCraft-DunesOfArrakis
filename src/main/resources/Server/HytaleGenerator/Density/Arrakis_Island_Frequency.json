@@ -1,0 +1,131 @@
+{
+  "$Comment": "Island grid frequency factor, 0..1: 0 inside the continent footprint, 1 within 3000 m of it, 0.1 from 10000 m and beyond the 50000 m square.",
+  "Type": "Exported",
+  "ExportAs": "Arrakis_Island_Frequency",
+  "SingleInstance": true,
+  "Skip": false,
+  "Inputs": [
+    {
+      "Type": "YOverride",
+      "Value": 0,
+      "Skip": false,
+      "Inputs": [
+        {
+          "Type": "Cache",
+          "Capacity": 512,
+          "Skip": false,
+          "Inputs": [
+            {
+              "Type": "Min",
+              "Skip": false,
+              "Inputs": [
+                {
+                  "Type": "CurveMapper",
+                  "Curve": {
+                    "Type": "Manual",
+                    "Points": [
+                      {
+                        "In": -100000,
+                        "Out": 0
+                      },
+                      {
+                        "In": -1,
+                        "Out": 0
+                      },
+                      {
+                        "In": 0,
+                        "Out": 1
+                      },
+                      {
+                        "In": 3000,
+                        "Out": 1
+                      },
+                      {
+                        "In": 10000,
+                        "Out": 0.1
+                      },
+                      {
+                        "In": 100000,
+                        "Out": 0.1
+                      }
+                    ]
+                  },
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "Imported",
+                      "Skip": false,
+                      "Name": "Arrakis_Continent_Dist"
+                    }
+                  ]
+                },
+                {
+                  "Type": "CurveMapper",
+                  "Curve": {
+                    "Type": "Manual",
+                    "Points": [
+                      {
+                        "In": -27000,
+                        "Out": 0.1
+                      },
+                      {
+                        "In": -25000,
+                        "Out": 1
+                      },
+                      {
+                        "In": 25000,
+                        "Out": 1
+                      },
+                      {
+                        "In": 27000,
+                        "Out": 0.1
+                      }
+                    ]
+                  },
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "XValue",
+                      "Skip": false
+                    }
+                  ]
+                },
+                {
+                  "Type": "CurveMapper",
+                  "Curve": {
+                    "Type": "Manual",
+                    "Points": [
+                      {
+                        "In": -27000,
+                        "Out": 0.1
+                      },
+                      {
+                        "In": -25000,
+                        "Out": 1
+                      },
+                      {
+                        "In": 25000,
+                        "Out": 1
+                      },
+                      {
+                        "In": 27000,
+                        "Out": 0.1
+                      }
+                    ]
+                  },
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "ZValue",
+                      "Skip": false
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

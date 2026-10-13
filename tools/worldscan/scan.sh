@@ -23,7 +23,7 @@ SAVE="${SAVE_TEMPLATE:-$APPDATA/Hytale/UserData/Saves/Arrakis v1}"
 node -e "
 const fs=require('fs');
 const w=JSON.parse(fs.readFileSync(process.argv[1]+'/universe/worlds/default/config.json','utf8'));
-w.Seed=Number(process.argv[3]); w.WorldGen={Type:'Dunes_of_Arrakis'}; w.IsSpawningNPC=false; w.IsSpawnMarkersEnabled=false; w.IsBlockSpawnersEnabled=false;
+w.Seed=Number(process.argv[3]); w.WorldGen=process.env.WS?{Type:'Dunes_of_Arrakis',WorldStructure:process.env.WS}:{Type:'Dunes_of_Arrakis'}; w.IsSpawningNPC=false; w.IsSpawnMarkersEnabled=false; w.IsBlockSpawnersEnabled=false;
 fs.writeFileSync(process.argv[2]+'/universe/worlds/default/config.json',JSON.stringify(w,null,2));
 const c=JSON.parse(fs.readFileSync(process.argv[1]+'/config.json','utf8')); c.Mods={}; fs.writeFileSync(process.argv[2]+'/config.json',JSON.stringify(c,null,2));
 " "$SAVE" "$srv" "$seed"

@@ -51,7 +51,9 @@ const P = Object.assign({}, PARAMS, process.env.CAVE_PARAMS ? JSON.parse(process
 const here = __dirname;
 const pack = path.resolve(process.argv[2] || path.join(here, '..', '..', 'src', 'main', 'resources'));
 const gen = path.join(pack, 'Server', 'HytaleGenerator');
-const baselineFile = path.join(here, 'out', 'Arrakis_Terrain.pre-caves.json');
+// build order: continent.js writes the biome with the continent, caves.js adds the caves to it (the plain pre-round file is the fallback)
+const continentFile = path.join(here, 'out', 'Arrakis_Terrain.pre-caves.continent.json');
+const baselineFile = fs.existsSync(continentFile) && !process.env.NO_CONTINENT ? continentFile : path.join(here, 'out', 'Arrakis_Terrain.pre-caves.json');
 const write = (rel, obj) => { const f = path.join(gen, rel); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, JSON.stringify(obj, null, 2) + '\n'); };
 
 const c = v => ({ Type: 'Constant', Skip: false, Value: v });
@@ -72,11 +74,12 @@ let inside = null;
 (function find(n) { if (inside || !n || typeof n !== 'object') return; if (n.Type === 'Exported' && n.ExportAs === 'Arrakis_Inside') { inside = n; return; } for (const v of Object.values(n)) find(v); })(biome.Terrain);
 if (!inside) throw new Error('Arrakis_Inside not found in the baseline biome');
 const insideMax = inside.Inputs[0].Inputs[0].Inputs[0]; // YOverride > Cache > Max
-if (insideMax.Type !== 'Max' || insideMax.Inputs.length !== 5) throw new Error('unexpected Arrakis_Inside layout');
+if (insideMax.Type !== 'Max' || (insideMax.Inputs.length !== 5 && insideMax.Inputs.length !== 6)) throw new Error('unexpected Arrakis_Inside layout');
 const comment = n => (n.Inputs[1].$Comment || '');
 const large = [insideMax.Inputs[0], insideMax.Inputs[4]];
+if (insideMax.Inputs.length === 6) large.push(insideMax.Inputs[5]); // the continents (added by continent.js)
 if (!/Regular island/.test(comment(large[0])) || !/land-mass/.test(comment(large[1]))) throw new Error('Arrakis_Inside inputs are not in the expected order');
-write('Density/Arrakis_Large_Inside.json', { $Comment: 'About how far inside the shore of a large island or land mass a column is (regular islands: metres; huge land masses: less than a metre per metre). Medium and small outcrops are left out.',
+write('Density/Arrakis_Large_Inside.json', { $Comment: 'About how far inside the shore of a large island or land mass a column is (regular islands: metres; huge land masses: less than a metre per metre). Medium and small outcrops are left out. The continents count as large land masses (metres inside the shore).',
   Type: 'Exported', ExportAs: 'Arrakis_Large_Inside', SingleInstance: true, Skip: false,
   Inputs: [node('YOverride', [node('Cache', [node('Max', copy(large))], { Capacity: 3 })], { Value: 0 })] });
 

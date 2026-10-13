@@ -1,0 +1,574 @@
+{
+  "$Comment": "Cap on the continent fields along the lines where two continents nearly meet (pairs: 1 2 812, 1 3 309, 1 4 336, 2 3 425 [continent, continent, nominal gap in m]): -80 to 40 m at the middle of the gap, rising across a band of 150-400 m; large (no cap) elsewhere.",
+  "Type": "Exported",
+  "ExportAs": "Arrakis_Cont_Seam",
+  "SingleInstance": true,
+  "Skip": false,
+  "Inputs": [
+    {
+      "Type": "YOverride",
+      "Value": 0,
+      "Skip": false,
+      "Inputs": [
+        {
+          "Type": "Cache",
+          "Capacity": 3,
+          "Skip": false,
+          "Inputs": [
+            {
+              "Type": "Sum",
+              "Skip": false,
+              "Inputs": [
+                {
+                  "Type": "Normalizer",
+                  "FromMin": -1,
+                  "FromMax": 1,
+                  "ToMin": -80,
+                  "ToMax": 40,
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "SimplexNoise2D",
+                      "Scale": 600,
+                      "Octaves": 2,
+                      "Lacunarity": 2,
+                      "Persistence": 0.5,
+                      "Seed": "Arrakis_Continent_Seam_Depth",
+                      "Skip": false
+                    }
+                  ]
+                },
+                {
+                  "Type": "CurveMapper",
+                  "Curve": {
+                    "Type": "Manual",
+                    "Points": [
+                      {
+                        "In": 0,
+                        "Out": 0
+                      },
+                      {
+                        "In": 130,
+                        "Out": 130
+                      },
+                      {
+                        "In": 260,
+                        "Out": 1500
+                      }
+                    ]
+                  },
+                  "Skip": false,
+                  "Inputs": [
+                    {
+                      "Type": "Multiplier",
+                      "Skip": false,
+                      "Inputs": [
+                        {
+                          "Type": "Min",
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "Mix",
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Constant",
+                                  "Skip": false,
+                                  "Value": 10000
+                                },
+                                {
+                                  "Type": "CurveMapper",
+                                  "Curve": {
+                                    "Type": "Manual",
+                                    "Points": [
+                                      {
+                                        "In": -2500,
+                                        "Out": 2500
+                                      },
+                                      {
+                                        "In": 0,
+                                        "Out": 0
+                                      },
+                                      {
+                                        "In": 2500,
+                                        "Out": 2500
+                                      }
+                                    ]
+                                  },
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Sum",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_D_1"
+                                        },
+                                        {
+                                          "Type": "Multiplier",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": -1
+                                            },
+                                            {
+                                              "Type": "Imported",
+                                              "Skip": false,
+                                              "Name": "Arrakis_Cont_D_2"
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Clamp",
+                                  "WallA": 0,
+                                  "WallB": 1,
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 0.01
+                                        },
+                                        {
+                                          "Type": "Sum",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": 1800
+                                            },
+                                            {
+                                              "Type": "Multiplier",
+                                              "Skip": false,
+                                              "Inputs": [
+                                                {
+                                                  "Type": "Constant",
+                                                  "Skip": false,
+                                                  "Value": -1
+                                                },
+                                                {
+                                                  "Type": "Sum",
+                                                  "Skip": false,
+                                                  "Inputs": [
+                                                    {
+                                                      "Type": "Imported",
+                                                      "Skip": false,
+                                                      "Name": "Arrakis_Cont_D_1"
+                                                    },
+                                                    {
+                                                      "Type": "Imported",
+                                                      "Skip": false,
+                                                      "Name": "Arrakis_Cont_D_2"
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Type": "Mix",
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Constant",
+                                  "Skip": false,
+                                  "Value": 10000
+                                },
+                                {
+                                  "Type": "CurveMapper",
+                                  "Curve": {
+                                    "Type": "Manual",
+                                    "Points": [
+                                      {
+                                        "In": -2500,
+                                        "Out": 2500
+                                      },
+                                      {
+                                        "In": 0,
+                                        "Out": 0
+                                      },
+                                      {
+                                        "In": 2500,
+                                        "Out": 2500
+                                      }
+                                    ]
+                                  },
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Sum",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_D_1"
+                                        },
+                                        {
+                                          "Type": "Multiplier",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": -1
+                                            },
+                                            {
+                                              "Type": "Imported",
+                                              "Skip": false,
+                                              "Name": "Arrakis_Cont_D_3"
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Clamp",
+                                  "WallA": 0,
+                                  "WallB": 1,
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 0.01
+                                        },
+                                        {
+                                          "Type": "Sum",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": 1800
+                                            },
+                                            {
+                                              "Type": "Multiplier",
+                                              "Skip": false,
+                                              "Inputs": [
+                                                {
+                                                  "Type": "Constant",
+                                                  "Skip": false,
+                                                  "Value": -1
+                                                },
+                                                {
+                                                  "Type": "Sum",
+                                                  "Skip": false,
+                                                  "Inputs": [
+                                                    {
+                                                      "Type": "Imported",
+                                                      "Skip": false,
+                                                      "Name": "Arrakis_Cont_D_1"
+                                                    },
+                                                    {
+                                                      "Type": "Imported",
+                                                      "Skip": false,
+                                                      "Name": "Arrakis_Cont_D_3"
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Type": "Mix",
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Constant",
+                                  "Skip": false,
+                                  "Value": 10000
+                                },
+                                {
+                                  "Type": "CurveMapper",
+                                  "Curve": {
+                                    "Type": "Manual",
+                                    "Points": [
+                                      {
+                                        "In": -2500,
+                                        "Out": 2500
+                                      },
+                                      {
+                                        "In": 0,
+                                        "Out": 0
+                                      },
+                                      {
+                                        "In": 2500,
+                                        "Out": 2500
+                                      }
+                                    ]
+                                  },
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Sum",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_D_1"
+                                        },
+                                        {
+                                          "Type": "Multiplier",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": -1
+                                            },
+                                            {
+                                              "Type": "Imported",
+                                              "Skip": false,
+                                              "Name": "Arrakis_Cont_D_4"
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Clamp",
+                                  "WallA": 0,
+                                  "WallB": 1,
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 0.01
+                                        },
+                                        {
+                                          "Type": "Sum",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": 1800
+                                            },
+                                            {
+                                              "Type": "Multiplier",
+                                              "Skip": false,
+                                              "Inputs": [
+                                                {
+                                                  "Type": "Constant",
+                                                  "Skip": false,
+                                                  "Value": -1
+                                                },
+                                                {
+                                                  "Type": "Sum",
+                                                  "Skip": false,
+                                                  "Inputs": [
+                                                    {
+                                                      "Type": "Imported",
+                                                      "Skip": false,
+                                                      "Name": "Arrakis_Cont_D_1"
+                                                    },
+                                                    {
+                                                      "Type": "Imported",
+                                                      "Skip": false,
+                                                      "Name": "Arrakis_Cont_D_4"
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Type": "Mix",
+                              "Skip": false,
+                              "Inputs": [
+                                {
+                                  "Type": "Constant",
+                                  "Skip": false,
+                                  "Value": 10000
+                                },
+                                {
+                                  "Type": "CurveMapper",
+                                  "Curve": {
+                                    "Type": "Manual",
+                                    "Points": [
+                                      {
+                                        "In": -2500,
+                                        "Out": 2500
+                                      },
+                                      {
+                                        "In": 0,
+                                        "Out": 0
+                                      },
+                                      {
+                                        "In": 2500,
+                                        "Out": 2500
+                                      }
+                                    ]
+                                  },
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Sum",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Imported",
+                                          "Skip": false,
+                                          "Name": "Arrakis_Cont_D_2"
+                                        },
+                                        {
+                                          "Type": "Multiplier",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": -1
+                                            },
+                                            {
+                                              "Type": "Imported",
+                                              "Skip": false,
+                                              "Name": "Arrakis_Cont_D_3"
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Type": "Clamp",
+                                  "WallA": 0,
+                                  "WallB": 1,
+                                  "Skip": false,
+                                  "Inputs": [
+                                    {
+                                      "Type": "Multiplier",
+                                      "Skip": false,
+                                      "Inputs": [
+                                        {
+                                          "Type": "Constant",
+                                          "Skip": false,
+                                          "Value": 0.01
+                                        },
+                                        {
+                                          "Type": "Sum",
+                                          "Skip": false,
+                                          "Inputs": [
+                                            {
+                                              "Type": "Constant",
+                                              "Skip": false,
+                                              "Value": 1800
+                                            },
+                                            {
+                                              "Type": "Multiplier",
+                                              "Skip": false,
+                                              "Inputs": [
+                                                {
+                                                  "Type": "Constant",
+                                                  "Skip": false,
+                                                  "Value": -1
+                                                },
+                                                {
+                                                  "Type": "Sum",
+                                                  "Skip": false,
+                                                  "Inputs": [
+                                                    {
+                                                      "Type": "Imported",
+                                                      "Skip": false,
+                                                      "Name": "Arrakis_Cont_D_2"
+                                                    },
+                                                    {
+                                                      "Type": "Imported",
+                                                      "Skip": false,
+                                                      "Name": "Arrakis_Cont_D_3"
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "Normalizer",
+                          "FromMin": -1,
+                          "FromMax": 1,
+                          "ToMin": 0.325,
+                          "ToMax": 0.87,
+                          "Skip": false,
+                          "Inputs": [
+                            {
+                              "Type": "SimplexNoise2D",
+                              "Scale": 420,
+                              "Octaves": 2,
+                              "Lacunarity": 2,
+                              "Persistence": 0.5,
+                              "Seed": "Arrakis_Continent_Seam_Width",
+                              "Skip": false
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

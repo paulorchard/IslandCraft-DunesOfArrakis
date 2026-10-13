@@ -1,0 +1,39 @@
+{
+  "$Comment": "Continent 2 with the seam cap.",
+  "Type": "Exported",
+  "ExportAs": "Arrakis_Cont_Cap_2",
+  "SingleInstance": true,
+  "Skip": false,
+  "Inputs": [
+    {
+      "Type": "YOverride",
+      "Value": 0,
+      "Skip": false,
+      "Inputs": [
+        {
+          "Type": "Cache",
+          "Capacity": 3,
+          "Skip": false,
+          "Inputs": [
+            {
+              "Type": "Min",
+              "Skip": false,
+              "Inputs": [
+                {
+                  "Type": "Imported",
+                  "Skip": false,
+                  "Name": "Arrakis_Cont_2"
+                },
+                {
+                  "Type": "Imported",
+                  "Skip": false,
+                  "Name": "Arrakis_Cont_Seam"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
